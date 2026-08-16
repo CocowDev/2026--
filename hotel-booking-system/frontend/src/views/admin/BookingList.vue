@@ -2,7 +2,8 @@
 import { useRouter } from 'vue-router';
 import { useBookingStore } from '../../stores/booking';
 import { bookingAPI } from '../../api';
-import { Search, Filter, Download, Eye, Edit, Trash2, RefreshCw } from 'lucide-vue-next';
+import { formatMoney } from '../../utils/money';
+import { Search, Filter, Download, Eye, Trash2, RefreshCw } from 'lucide-vue-next';
 import { ElMessage, ElMessageBox } from 'element-plus';
 const router = useRouter();
 const bookingStore = useBookingStore();
@@ -141,11 +142,12 @@ const handleExport = async () => {
             <td>#{{ booking.id }}</td>
             <td>{{ booking.guestName }}</td>
             <td>{{ booking.guestPhone }}</td>
-            <td>{{ booking.roomType?.title }}</td>
+            <!-- 房型列：餐饮预订显示类型标记，客房预订显示联表房型名 -->
+            <td>{{ booking.type === 'restaurant' ? '餐饮预订' : (booking.roomTitle || '—') }}</td>
             <td>{{ booking.checkInDate }}</td>
             <td>{{ booking.checkOutDate }}</td>
             <td>{{ booking.guestCount }}人</td>
-            <td>¥{{ booking.totalPrice }}</td>
+            <td>¥{{ formatMoney(booking.totalPrice) }}</td>
             <td>
               <span :class="['status-badge', getStatusClass(booking.status)]">
                 {{ getStatusText(booking.status) }}

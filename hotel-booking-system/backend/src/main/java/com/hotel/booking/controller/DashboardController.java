@@ -1,9 +1,9 @@
 package com.hotel.booking.controller;
 
 import com.hotel.booking.dto.ApiResponse;
-import com.hotel.booking.entity.Booking;
 import com.hotel.booking.service.BookingService;
 import com.hotel.booking.service.UserService;
+import com.hotel.booking.vo.BookingVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +33,8 @@ public class DashboardController {
     }
 
     @GetMapping("/recent-bookings")
-    public ResponseEntity<ApiResponse<List<Booking>>> getRecentBookings() {
-        List<Booking> bookings = bookingService.getRecentBookings();
+    public ResponseEntity<ApiResponse<List<BookingVO>>> getRecentBookings() {
+        List<BookingVO> bookings = bookingService.getRecentBookings();
         return ResponseEntity.ok(ApiResponse.success(bookings));
     }
 

@@ -26,9 +26,9 @@ export interface RoomType {
 
 export interface Restaurant {
   id: number;
-  title: string;
+  /** 餐厅名称：后端字段为 name（历史缺陷：前端曾用 title，已统一） */
+  name: string;
   description: string;
-  price?: number;
   imageUrl: string;
   createdAt: string;
   updatedAt: string;
@@ -48,19 +48,28 @@ export interface Booking {
   id: number;
   userId: number;
   roomTypeId: number;
+  /** 预订类型：room-客房 / restaurant-餐饮 */
+  type?: string;
   guestName: string;
   guestPhone: string;
   guestEmail: string;
+  /** 日期格式 yyyy-MM-dd（后端 LocalDate） */
   checkInDate: string;
   checkOutDate: string;
   guestCount: number;
   specialRequests: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  /** 金额：BigDecimal，展示时用 formatMoney 保留两位小数 */
   totalPrice: number;
   createdAt: string;
   updatedAt: string;
-  user?: User;
-  roomType?: RoomType;
+  // —— 后端 BookingVO 联表字段（预订列表/详情展示用）——
+  userName?: string;
+  userPhone?: string;
+  roomTitle?: string;
+  roomPrice?: number;
+  roomImageUrl?: string;
+  roomDescription?: string;
 }
 
 export interface LoginForm {

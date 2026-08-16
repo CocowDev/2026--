@@ -1,7 +1,8 @@
 <script setup lang="ts">import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useBookingStore } from '../../stores/booking';
-import { ArrowLeft, Calendar, Users, Phone, Mail, MessageSquare, CreditCard } from 'lucide-vue-next';
+import { formatMoney } from '../../utils/money';
+import { ArrowLeft, Calendar, Users, Phone, Mail, MessageSquare } from 'lucide-vue-next';
 import { ElMessage } from 'element-plus';
 const router = useRouter();
 const route = useRoute();
@@ -126,11 +127,12 @@ const handleStatusChange = async (status: string) => {
         <div class="detail-card">
           <h3>预订信息</h3>
           <div class="room-preview">
-            <img :src="booking.roomType?.imageUrl" :alt="booking.roomType?.title" />
+            <img :src="booking.roomImageUrl" :alt="booking.roomTitle" />
             <div class="room-info">
-              <h4>{{ booking.roomType?.title }}</h4>
-              <p>{{ booking.roomType?.description }}</p>
-              <p class="price">¥{{ booking.roomType?.price }}/晚</p>
+              <!-- 联表 VO 字段：餐饮预订无房型信息，显示类型标记 -->
+              <h4>{{ booking.type === 'restaurant' ? '餐饮预订' : (booking.roomTitle || '未知房型') }}</h4>
+              <p>{{ booking.roomDescription }}</p>
+              <p class="price">¥{{ formatMoney(booking.roomPrice) }}/晚</p>
             </div>
           </div>
           <div class="info-row">
@@ -154,7 +156,7 @@ const handleStatusChange = async (status: string) => {
           <div class="price-breakdown">
             <div class="price-row">
               <span>房型单价</span>
-              <span>¥{{ booking.roomType?.price }}</span>
+              <span>¥{{ formatMoney(booking.roomPrice) }}</span>
             </div>
             <div class="price-row">
               <span>入住天数</span>
@@ -163,7 +165,7 @@ const handleStatusChange = async (status: string) => {
             <div class="price-divider"></div>
             <div class="price-total">
               <span>总计</span>
-              <span>¥{{ booking.totalPrice }}</span>
+              <span>¥{{ formatMoney(booking.totalPrice) }}</span>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useBookingStore } from '../stores/booking'
 import { roomTypeAPI } from '../api'
+import { formatMoney } from '../utils/money'
 import RoomList from '../components/RoomList.vue'
 import type { RoomType } from '../types'
 import { Calendar, Users, MessageSquare, CreditCard, CheckCircle } from 'lucide-vue-next'
@@ -80,6 +81,7 @@ const handleSubmit = async () => {
   }
   
   try {
+    // 注意：userId 由后端从登录态解析，totalPrice 由后端按房型单价计算，前端无需提交
     await bookingStore.createBooking({
       roomTypeId: selectedRoom.value.id,
       guestName: form.value.guestName,
@@ -89,8 +91,6 @@ const handleSubmit = async () => {
       checkOutDate: form.value.checkOutDate,
       guestCount: form.value.guestCount,
       specialRequests: form.value.specialRequests,
-      userId: authStore.user!.id,
-      totalPrice: totalPrice.value,
     })
     ElMessage.success('预订成功！')
     router.push('/')
@@ -257,7 +257,7 @@ const handleSubmit = async () => {
             
             <div class="summary-total">
               <span class="total-label">总计</span>
-              <span class="total-price">¥{{ totalPrice }}</span>
+              <span class="total-price">¥{{ formatMoney(totalPrice) }}</span>
             </div>
           </div>
           

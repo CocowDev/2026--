@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
 import { userAPI } from '../../api';
-import { Search, Trash2, RefreshCw, User } from 'lucide-vue-next';
+import { Search, Trash2, RefreshCw } from 'lucide-vue-next';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 const users = ref<any[]>([]);

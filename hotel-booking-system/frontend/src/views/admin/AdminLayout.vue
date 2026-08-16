@@ -7,8 +7,6 @@ import {
   Users,
   LogOut,
   Crown,
-  Menu,
-  X,
 } from 'lucide-vue-next';
 
 const router = useRouter();

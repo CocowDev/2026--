@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { dashboardAPI, bookingAPI } from '../../api';
+import { formatMoney } from '../../utils/money';
 
 const router = useRouter();
 const stats = ref({
@@ -52,7 +53,7 @@ const statCards = computed(() => [
   { label: '注册用户', value: stats.value.userCount, icon: '👥', color: '#9c27b0', bg: '#f3e5f5', path: '/admin/users' }
 ]);
 
-const formatMoney = (n: number) => Number(n).toLocaleString('zh-CN');
+// 金额格式化统一使用 utils/money.ts 的 formatMoney（保留两位小数）
 
 const goBooking = (id: number) => router.push(`/admin/bookings/${id}`);
 const goAll = () => router.push('/admin/bookings');
@@ -149,7 +150,10 @@ const getStatusClass = (status: string) => {
                   <tr v-for="b in stats.recent" :key="b.id">
                     <td>#{{ String(b.id).slice(-6) }}</td>
                     <td>
-                      <span class="tag room">客房</span>
+                      <!-- 预订类型：客房/餐饮（后端 VO 的 type 字段） -->
+                      <span :class="['tag', b.type === 'restaurant' ? 'dining' : 'room']">
+                        {{ b.type === 'restaurant' ? '餐饮' : '客房' }}
+                      </span>
                     </td>
                     <td>{{ b.guestName || '未登录用户' }}</td>
                     <td>{{ (b.createdAt || '').slice(0, 10) }}</td>

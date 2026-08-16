@@ -115,13 +115,13 @@ const handleReservation = async () => {
         <div v-if="selectedRestaurant" class="booking-form">
           <div class="form-card">
             <div class="form-header">
-              <h3>{{ selectedRestaurant.title }} - 预订</h3>
+              <h3>{{ selectedRestaurant.name }} - 预订</h3>
             </div>
             <div class="form-body">
               <div class="restaurant-preview">
                 <img 
                   :src="selectedRestaurant.imageUrl" 
-                  :alt="selectedRestaurant.title"
+                  :alt="selectedRestaurant.name"
                   @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/restaurant-fallback/600/400'"
                 >
                 <div class="preview-info">

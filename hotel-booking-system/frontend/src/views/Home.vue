@@ -73,7 +73,7 @@ onMounted(async () => {
   restaurants.value = restaurantsRes.data.data
 })
 
-const handleBookService = (service: any) => {
+const handleBookService = (_service: any) => {
   router.push('/contact')
 }
 </script>
@@ -174,11 +174,11 @@ const handleBookService = (service: any) => {
             @click="router.push('/dining-booking')"
           >
             <div class="restaurant-media">
-              <img :src="restaurant.imageUrl" :alt="restaurant.title" />
+              <img :src="restaurant.imageUrl" :alt="restaurant.name" />
               <div class="restaurant-overlay"></div>
             </div>
             <div class="restaurant-info">
-              <h3>{{ restaurant.title }}</h3>
+              <h3>{{ restaurant.name }}</h3>
               <p>{{ restaurant.description }}</p>
             </div>
           </div>

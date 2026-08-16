@@ -23,7 +23,7 @@ const emit = defineEmits<{
           <img
             :src="restaurant.imageUrl"
             class="dining-image"
-            :alt="restaurant.title"
+            :alt="restaurant.name"
             @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/restaurant-fallback/600/400'"
           >
           <div class="dining-media-overlay"></div>
@@ -35,7 +35,7 @@ const emit = defineEmits<{
         </div>
 
         <div class="dining-body">
-          <h3 class="dining-title">{{ restaurant.title }}</h3>
+          <h3 class="dining-title">{{ restaurant.name }}</h3>
           <p class="dining-description">{{ restaurant.description }}</p>
 
           <button

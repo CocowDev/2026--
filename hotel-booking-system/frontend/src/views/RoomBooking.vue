@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { bookingAPI, roomTypeAPI, restaurantAPI } from '../api';
 import { getToday, getTomorrow } from '../utils/date';
@@ -42,15 +42,6 @@ const servicesData = [
   { id: 6, name: '机场接送', icon: '🚗', description: '专车接送服务', price: 150 }
 ];
 
-const currentComponent = computed(() => {
-  const map: Record<string, any> = {
-    rooms: RoomList,
-    dining: DiningList,
-    services: ServiceList
-  };
-  return map[currentCategory.value];
-});
-
 const resetSelection = () => {
   selectedRoom.value = null;
   selectedRestaurant.value = null;
@@ -89,7 +80,7 @@ const handleDiningBooking = async () => {
   loading.value = true;
   try {
     await new Promise(resolve => setTimeout(resolve, 1000));
-    message.value = `餐厅预订成功！${selectedRestaurant.value?.title} - ${diningDate.value} ${diningTime.value}，共 ${diningGuests.value} 人`;
+    message.value = `餐厅预订成功！${selectedRestaurant.value?.name} - ${diningDate.value} ${diningTime.value}，共 ${diningGuests.value} 人`;
     diningTime.value = '';
     diningGuests.value = '';
     diningRequests.value = '';
@@ -314,14 +305,15 @@ loadData();
               <img
                 :src="selectedRestaurant.imageUrl"
                 class="confirm-img"
-                :alt="selectedRestaurant.title"
+                :alt="selectedRestaurant.name"
                 @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/restaurant/600/400'"
               >
             </div>
             <div class="confirm-info">
-              <h4 class="confirm-name">{{ selectedRestaurant.title }}</h4>
+              <h4 class="confirm-name">{{ selectedRestaurant.name }}</h4>
               <p class="confirm-desc">{{ selectedRestaurant.description }}</p>
-              <p class="confirm-price">每人 {{ selectedRestaurant.price || '面议' }}<span>元</span></p>
+              <!-- 后端餐厅无 price 字段，人均价格按需面议 -->
+              <p class="confirm-price">人均 面议<span></span></p>
             </div>
 
             <form @submit.prevent="handleDiningBooking" class="confirm-form">

@@ -3,18 +3,14 @@ package com.hotel.booking.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.hotel.booking.dto.ApiResponse;
 import com.hotel.booking.dto.BookingDTO;
-import com.hotel.booking.entity.Booking;
-import com.hotel.booking.entity.RoomType;
-import com.hotel.booking.mapper.RoomTypeMapper;
-import com.hotel.booking.security.JwtUtil;
 import com.hotel.booking.service.BookingService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.hotel.booking.vo.BookingVO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,13 +18,9 @@ import java.util.Map;
 public class BookingController {
 
     private final BookingService bookingService;
-    private final RoomTypeMapper roomTypeMapper;
-    private final JwtUtil jwtUtil;
 
-    public BookingController(BookingService bookingService, RoomTypeMapper roomTypeMapper, JwtUtil jwtUtil) {
+    public BookingController(BookingService bookingService) {
         this.bookingService = bookingService;
-        this.roomTypeMapper = roomTypeMapper;
-        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
@@ -37,7 +29,7 @@ public class BookingController {
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String keyword) {
-        IPage<Booking> bookingPage = bookingService.getBookings(page, pageSize, status, keyword);
+        IPage<BookingVO> bookingPage = bookingService.getBookings(page, pageSize, status, keyword);
         
         Map<String, Object> result = new HashMap<>();
         result.put("list", bookingPage.getRecords());
@@ -47,8 +39,8 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Booking>> detail(@PathVariable Long id) {
-        Booking booking = bookingService.getBookingById(id);
+    public ResponseEntity<ApiResponse<BookingVO>> detail(@PathVariable Long id) {
+        BookingVO booking = bookingService.getBookingById(id);
         if (booking == null) {
             return ResponseEntity.ok(ApiResponse.notFound("预订不存在"));
         }
@@ -61,16 +53,18 @@ public class BookingController {
         return ResponseEntity.ok(ApiResponse.success("更新成功", null));
     }
 
+    /**
+     * 创建预订：当前登录用户由 @AuthenticationPrincipal 注入（JwtAuthenticationFilter
+     * 已将 principal 设为 userId），替代原先手动解析 Authorization 头的写法
+     */
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> create(@Valid @RequestBody BookingDTO bookingDTO, HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-            Long userId = jwtUtil.getUserIdFromToken(token);
-            bookingService.createBooking(bookingDTO, userId);
-            return ResponseEntity.ok(ApiResponse.success("预订成功", null));
+    public ResponseEntity<ApiResponse<Void>> create(@Valid @RequestBody BookingDTO bookingDTO,
+                                                    @AuthenticationPrincipal Long userId) {
+        if (userId == null) {
+            return ResponseEntity.ok(ApiResponse.unauthorized("请先登录"));
         }
-        return ResponseEntity.ok(ApiResponse.unauthorized("请先登录"));
+        bookingService.createBooking(bookingDTO, userId);
+        return ResponseEntity.ok(ApiResponse.success("预订成功", null));
     }
 
     @PatchMapping("/{id}/status")
