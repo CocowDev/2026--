@@ -11,12 +11,13 @@ defineProps<{
 const currentIndex = ref(0)
 let timer: number | null = null
 
+// 轮播图：使用本地真实图片（frontend/public/images/，与房型/餐厅业务图共用）
 const slideImages = [
-  'https://picsum.photos/seed/carousel1/1200/400',
-  'https://picsum.photos/seed/carousel2/1200/400',
-  'https://picsum.photos/seed/carousel3/1200/400',
-  'https://picsum.photos/seed/carousel4/1200/400',
-  'https://picsum.photos/seed/carousel5/1200/400'
+  '/images/room-double.jpg',
+  '/images/room-ocean.jpg',
+  '/images/restaurant-luxury.jpg',
+  '/images/room-executive.jpg',
+  '/images/restaurant-buffet.jpg'
 ]
 
 const slideAlts = ['豪华客房', '海景套房', '酒店大堂', '行政套房', '泳池休闲区']
@@ -101,7 +102,7 @@ onUnmounted(() => {
           class="d-block w-100"
           :alt="slideAlts[index]"
           style="height: 500px; object-fit: cover;"
-          @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/hotel-fallback/1200/400'"
+          @error="($event.target as HTMLImageElement).src = '/images/room-ocean.jpg'"
         >
         <div class="gradient-overlay"></div>
         <div class="hero-content">
@@ -264,15 +265,15 @@ onUnmounted(() => {
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-  box-shadow: 0 10px 25px -8px rgba(139, 92, 246, 0.7);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 50%, #d4b06e 100%);
+  box-shadow: 0 10px 25px -8px rgba(184, 148, 80, 0.7);
   transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
   pointer-events: auto;
 }
 
 .hero-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 35px -8px rgba(139, 92, 246, 0.85);
+  box-shadow: 0 15px 35px -8px rgba(184, 148, 80, 0.85);
   filter: brightness(1.08);
 }
 
@@ -293,7 +294,7 @@ onUnmounted(() => {
   border-radius: 50%;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(236, 72, 153, 0.95) 100%);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(212, 176, 110, 0.95) 100%);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45),
               inset 0 1px 0 rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(6px);
@@ -352,8 +353,8 @@ onUnmounted(() => {
 
 .indicator-dot.active {
   width: 32px;
-  background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
-  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.55);
+  background: linear-gradient(135deg, #c9a96a 0%, #d4b06e 100%);
+  box-shadow: 0 4px 12px rgba(212, 176, 110, 0.55);
 }
 
 .indicator-dot:hover:not(.active) {

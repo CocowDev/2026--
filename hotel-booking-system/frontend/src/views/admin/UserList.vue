@@ -125,7 +125,7 @@ const handleDelete = async (id: number) => {
 
 .page-title {
   font-size: 1.8rem;
-  color: #1a1a2e;
+  color: #10233b;
 }
 
 .filters {
@@ -157,7 +157,7 @@ const handleDelete = async (id: number) => {
 
 .search-input:focus {
   outline: none;
-  border-color: #e94560;
+  border-color: #c9a96a;
 }
 
 .btn {

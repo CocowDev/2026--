@@ -35,5 +35,7 @@ const isAdminRoute = () => {
 
 .main-content {
   flex: 1;
+  /* 顶部占位：导航栏为 fixed 定位（高约 70px），防止遮挡页面首屏内容 */
+  padding-top: 70px;
 }
 </style>

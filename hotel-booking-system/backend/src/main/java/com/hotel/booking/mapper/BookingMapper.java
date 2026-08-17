@@ -42,7 +42,8 @@ public interface BookingMapper extends BaseMapper<Booking> {
     BookingVO findByIdWithDetails(Long id);
 
     /**
-     * 分页查询预订（联表，支持状态/关键词筛选）
+     * 分页查询预订（联表，支持状态/关键词/用户过滤）
+     * userId 为空表示管理员查询全部；非空表示普通用户只看自己的订单
      */
     @Select("<script>" +
             "SELECT b.*, u.username as user_name, u.phone as user_phone, " +
@@ -52,10 +53,12 @@ public interface BookingMapper extends BaseMapper<Booking> {
             "LEFT JOIN users u ON b.userId = u.id " +
             "LEFT JOIN room_types rt ON b.roomTypeId = rt.id " +
             "WHERE 1=1 " +
+            "<if test='userId != null'>AND b.userId = #{userId}</if>" +
             "<if test='status != null and status != \"\"'>AND b.status = #{status}</if>" +
             "<if test='keyword != null and keyword != \"\"'>AND (b.guestName LIKE CONCAT('%', #{keyword}, '%') OR b.phone LIKE CONCAT('%', #{keyword}, '%'))</if>" +
             "ORDER BY b.createdAt DESC" +
             "</script>")
-    IPage<BookingVO> findByPageWithDetails(Page<BookingVO> page, @Param("status") String status, @Param("keyword") String keyword);
+    IPage<BookingVO> findByPageWithDetails(Page<BookingVO> page, @Param("status") String status,
+                                           @Param("keyword") String keyword, @Param("userId") Long userId);
 
 }

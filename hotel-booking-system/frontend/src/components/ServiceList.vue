@@ -49,7 +49,7 @@ const emit = defineEmits<{
 .service-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
+  gap: 22px;
 }
 
 .service-cell {
@@ -60,7 +60,7 @@ const emit = defineEmits<{
   position: relative;
   background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
   border-radius: 22px;
-  padding: 32px 26px 28px;
+  padding: 24px 22px 22px;
   text-align: center;
   cursor: pointer;
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
@@ -80,8 +80,8 @@ const emit = defineEmits<{
   height: 140%;
   background: radial-gradient(
     circle at center,
-    rgba(139, 92, 246, 0.12) 0%,
-    rgba(236, 72, 153, 0.08) 40%,
+    rgba(184, 148, 80, 0.12) 0%,
+    rgba(212, 176, 110, 0.08) 40%,
     rgba(255, 255, 255, 0) 70%
   );
   opacity: 0;
@@ -93,7 +93,7 @@ const emit = defineEmits<{
 .service-card:hover {
   transform: translateY(-12px);
   box-shadow: 0 32px 60px -15px rgba(99, 102, 241, 0.28),
-              0 16px 32px -10px rgba(236, 72, 153, 0.18);
+              0 16px 32px -10px rgba(212, 176, 110, 0.18);
 }
 
 .service-card:hover::before {
@@ -110,8 +110,8 @@ const emit = defineEmits<{
   align-items: center;
   justify-content: center;
   border-radius: 20px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #ec4899 100%);
-  box-shadow: 0 14px 30px -10px rgba(139, 92, 246, 0.55),
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 55%, #d4b06e 100%);
+  box-shadow: 0 14px 30px -10px rgba(184, 148, 80, 0.55),
               inset 0 1px 0 rgba(255, 255, 255, 0.25);
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
               box-shadow 0.5s ease;
@@ -122,7 +122,7 @@ const emit = defineEmits<{
   position: absolute;
   inset: -8px;
   border-radius: 24px;
-  background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #d4b06e 100%);
   opacity: 0.25;
   filter: blur(18px);
   z-index: -1;
@@ -131,7 +131,7 @@ const emit = defineEmits<{
 
 .service-card:hover .service-icon-wrap {
   transform: translateY(-4px) scale(1.05) rotate(-2deg);
-  box-shadow: 0 20px 40px -10px rgba(139, 92, 246, 0.7),
+  box-shadow: 0 20px 40px -10px rgba(184, 148, 80, 0.7),
               inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
@@ -187,15 +187,15 @@ const emit = defineEmits<{
   color: #fff;
   font-weight: 700;
   letter-spacing: 0.3px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 55%, #d4b06e 100%);
   border-radius: 999px;
-  box-shadow: 0 8px 20px -8px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 8px 20px -8px rgba(184, 148, 80, 0.5);
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
 .service-card:hover .service-price {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px -8px rgba(139, 92, 246, 0.7);
+  box-shadow: 0 12px 24px -8px rgba(184, 148, 80, 0.7);
 }
 
 .service-price .price-symbol {
@@ -224,8 +224,8 @@ const emit = defineEmits<{
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #ec4899 100%);
-  box-shadow: 0 10px 24px -10px rgba(139, 92, 246, 0.6);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 55%, #d4b06e 100%);
+  box-shadow: 0 10px 24px -10px rgba(184, 148, 80, 0.6);
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.3s ease,
               filter 0.3s ease;
@@ -239,7 +239,7 @@ const emit = defineEmits<{
 
 .service-action:hover {
   transform: translateY(-2px);
-  box-shadow: 0 18px 34px -10px rgba(139, 92, 246, 0.8);
+  box-shadow: 0 18px 34px -10px rgba(184, 148, 80, 0.8);
   filter: brightness(1.06);
 }
 

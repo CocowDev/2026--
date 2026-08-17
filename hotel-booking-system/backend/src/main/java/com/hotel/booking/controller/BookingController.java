@@ -3,10 +3,12 @@ package com.hotel.booking.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.hotel.booking.dto.ApiResponse;
 import com.hotel.booking.dto.BookingDTO;
+import com.hotel.booking.dto.ServiceBookingDTO;
 import com.hotel.booking.service.BookingService;
 import com.hotel.booking.vo.BookingVO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +30,14 @@ public class BookingController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String keyword) {
-        IPage<BookingVO> bookingPage = bookingService.getBookings(page, pageSize, status, keyword);
+            @RequestParam(required = false) String keyword,
+            Authentication authentication) {
+        // 权限隔离：管理员查看全部订单；普通用户只能查看自己的订单
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        Long userId = isAdmin ? null : (Long) authentication.getPrincipal();
+        
+        IPage<BookingVO> bookingPage = bookingService.getBookings(page, pageSize, status, keyword, userId);
         
         Map<String, Object> result = new HashMap<>();
         result.put("list", bookingPage.getRecords());
@@ -78,6 +86,29 @@ public class BookingController {
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         bookingService.deleteBooking(id);
         return ResponseEntity.ok(ApiResponse.success("删除成功", null));
+    }
+
+    /**
+     * 用户取消自己的预订（个人中心）：仅本人且待处理状态可取消
+     */
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse<Void>> cancel(@PathVariable Long id,
+                                                    @AuthenticationPrincipal Long userId) {
+        bookingService.cancelBooking(id, userId);
+        return ResponseEntity.ok(ApiResponse.success("取消成功", null));
+    }
+
+    /**
+     * 服务预订（SPA/健身/泳池等）：写入 bookings，type='service'
+     */
+    @PostMapping("/service")
+    public ResponseEntity<ApiResponse<Void>> createService(@Valid @RequestBody ServiceBookingDTO dto,
+                                                           @AuthenticationPrincipal Long userId) {
+        if (userId == null) {
+            return ResponseEntity.ok(ApiResponse.unauthorized("请先登录"));
+        }
+        bookingService.createServiceBooking(dto, userId);
+        return ResponseEntity.ok(ApiResponse.success("服务预订成功", null));
     }
 
     @GetMapping("/export")

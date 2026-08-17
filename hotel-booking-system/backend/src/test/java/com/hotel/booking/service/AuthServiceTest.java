@@ -8,6 +8,7 @@ import com.hotel.booking.entity.User;
 import com.hotel.booking.mapper.AdminMapper;
 import com.hotel.booking.mapper.UserMapper;
 import com.hotel.booking.security.JwtUtil;
+import com.hotel.booking.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,7 +50,7 @@ class AuthServiceTest {
     private JwtUtil jwtUtil;
 
     @InjectMocks
-    private AuthService authService;
+    private AuthServiceImpl authService;
 
     /** 构造一个测试用户（password 为已加密串） */
     private User buildUser() {

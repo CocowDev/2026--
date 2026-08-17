@@ -1,87 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-
-interface NewsItem {
-  id: number
-  category: string
-  categoryName: string
-  title: string
-  summary: string
-  imageUrl: string
-  date: string
-  views: number
-  content: string
-}
-
-// 静态新闻数据（后端暂无新闻接口，前端内置示例数据）
-const newsData: NewsItem[] = [
-  {
-    id: 1,
-    category: 'hotel',
-    categoryName: '酒店动态',
-    title: '星级酒店全新升级，奢华体验再升级',
-    summary: '本酒店完成全面翻新，新增智能客房与全景套房，为您带来前所未有的入住体验。',
-    imageUrl: 'https://picsum.photos/seed/news1/600/400',
-    date: '2026-07-28',
-    views: 1280,
-    content: '<p>历经半年的精心改造，本酒店以全新面貌迎接八方来客。本次升级新增 30 间智能客房，配备语音控制系统、智能灯光与全景落地窗。</p><h2>全新设施</h2><p>顶楼海景套房可 270 度饱览城市天际线，并引入米其林星级主厨团队。</p>'
-  },
-  {
-    id: 2,
-    category: 'event',
-    categoryName: '活动资讯',
-    title: '盛夏狂欢季：住店即享SPA礼遇',
-    summary: '即日起至八月底，预订豪华房型及以上，即可获赠双人 SPA 套餐一份。',
-    imageUrl: 'https://picsum.photos/seed/news2/600/400',
-    date: '2026-07-25',
-    views: 856,
-    content: '<p>盛夏狂欢季活动火热进行中！即日起至 8 月 31 日，预订豪华间及以上房型，即可获赠价值 599 元的双人 SPA 套餐。</p><p>活动名额有限，先到先得。</p>'
-  },
-  {
-    id: 3,
-    category: 'travel',
-    categoryName: '旅游攻略',
-    title: '周边三日游精选路线推荐',
-    summary: '精选酒店周边热门景点，为您规划完美的三日深度游行程。',
-    imageUrl: 'https://picsum.photos/seed/news3/600/400',
-    date: '2026-07-20',
-    views: 1523,
-    content: '<p>酒店地处城市核心商圈，交通便捷。我们为您精心规划了三日深度游路线。</p><h2>Day 1</h2><p>海滨公园 — 海洋馆 — 海鲜大排档。</p><h2>Day 2</h2><p>古城老街 — 博物馆 — 特色茶馆。</p>'
-  },
-  {
-    id: 4,
-    category: 'food',
-    categoryName: '美食推荐',
-    title: '主厨私房菜：本季限定菜单发布',
-    summary: '米其林主厨倾力打造夏季限定菜单，时令食材与创新烹饪的完美碰撞。',
-    imageUrl: 'https://picsum.photos/seed/news4/600/400',
-    date: '2026-07-18',
-    views: 942,
-    content: '<p>本季限定菜单由米其林星级主厨团队倾力打造，选用当季新鲜食材，融合中西烹饪技法。</p><p>每道菜品都经过精心设计，限时供应至 9 月底。</p>'
-  },
-  {
-    id: 5,
-    category: 'hotel',
-    categoryName: '酒店动态',
-    title: '亲子主题房温情上线',
-    summary: '全新推出四大主题亲子房，让全家出行更添温馨与趣味。',
-    imageUrl: 'https://picsum.photos/seed/news5/600/400',
-    date: '2026-07-15',
-    views: 678,
-    content: '<p>为满足家庭客群需求，酒店全新推出海洋、森林、太空、童话四大主题亲子房。</p><p>每间客房均配备儿童专属洗漱用品与趣味玩具。</p>'
-  },
-  {
-    id: 6,
-    category: 'event',
-    categoryName: '活动资讯',
-    title: '中秋赏月晚宴预订开启',
-    summary: '中秋佳节，邀您共赴顶楼露天花园，赏月品茗，共度团圆时光。',
-    imageUrl: 'https://picsum.photos/seed/news6/600/400',
-    date: '2026-07-10',
-    views: 1102,
-    content: '<p>中秋佳节将至，酒店顶楼露天花园将举办赏月晚宴。</p><p>提供精选月饼礼盒与传统茶饮，更有古筝现场演奏。</p><p>席位有限，敬请提前预订。</p>'
-  }
-]
+import { newsData, type NewsItem } from '../data/news'
 
 const newsList = ref<NewsItem[]>([])
 const selectedNews = ref<NewsItem | null>(null)
@@ -93,7 +12,9 @@ const categories = [
   { id: 'hotel', name: '酒店动态' },
   { id: 'event', name: '活动资讯' },
   { id: 'travel', name: '旅游攻略' },
-  { id: 'food', name: '美食推荐' }
+  { id: 'food', name: '美食推荐' },
+  { id: 'facility', name: '酒店设施' },
+  { id: 'service', name: '服务指南' }
 ]
 
 const filteredNews = ref<NewsItem[]>([])
@@ -117,12 +38,12 @@ const closeNewsDetail = () => {
 // 图片加载失败时回退到占位图
 const handleImgError = (e: Event) => {
   const target = e.target as HTMLImageElement
-  target.src = 'https://picsum.photos/seed/news-fallback/400/300'
+  target.src = '/images/room-ocean.jpg'
 }
 
 const handleDetailImgError = (e: Event) => {
   const target = e.target as HTMLImageElement
-  target.src = 'https://picsum.photos/seed/news-detail/1200/600'
+  target.src = '/images/room-ocean.jpg'
 }
 
 onMounted(() => {
@@ -253,9 +174,9 @@ onMounted(() => {
 
 .hero-section {
   position: relative;
-  padding: 120px 24px 140px;
+  padding: 84px 24px 100px;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #0e1c2e 0%, #1c3350 55%, #3a5370 100%);
 }
 
 .hero-bg {
@@ -263,7 +184,7 @@ onMounted(() => {
   inset: 0;
   background:
     radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35) 0%, transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.3) 0%, transparent 45%);
+    radial-gradient(circle at 80% 70%, rgba(212, 176, 110, 0.3) 0%, transparent 45%);
   pointer-events: none;
 }
 
@@ -369,14 +290,14 @@ onMounted(() => {
 }
 
 .category-tab:hover {
-  color: #8b5cf6;
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+  color: #b89450;
+  box-shadow: 0 4px 16px rgba(184, 148, 80, 0.15);
 }
 
 .category-tab.is-active {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #c9a96a, #b89450);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 4px 20px rgba(184, 148, 80, 0.4);
 }
 
 .search-box {
@@ -392,7 +313,7 @@ onMounted(() => {
 }
 
 .search-box:focus-within {
-  border-color: #8b5cf6;
+  border-color: #b89450;
 }
 
 .search-box svg {
@@ -456,7 +377,7 @@ onMounted(() => {
   top: 12px;
   left: 12px;
   padding: 4px 12px;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(240, 147, 251, 0.9));
+  background: linear-gradient(135deg, rgba(184, 148, 80, 0.9), rgba(240, 147, 251, 0.9));
   color: #fff;
   font-size: 12px;
   font-weight: 600;
@@ -583,8 +504,8 @@ onMounted(() => {
 .detail-category {
   display: inline-block;
   padding: 6px 14px;
-  background: rgba(139, 92, 246, 0.1);
-  color: #8b5cf6;
+  background: rgba(184, 148, 80, 0.1);
+  color: #b89450;
   font-size: 12px;
   font-weight: 600;
   border-radius: 999px;

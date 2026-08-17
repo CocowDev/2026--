@@ -1,0 +1,65 @@
+/* ============================================================
+   全局主题（酒店奢华风：深海蓝 × 香槟金）
+   所有页面统一引用本文件定义的设计令牌，替换原先紫色 SaaS 风主色
+   ============================================================ */
+
+:root {
+  /* —— 色板 —— */
+  --hotel-navy: #10233b;        /* 深海蓝（主色） */
+  --hotel-navy-2: #1d3a5f;      /* 深海蓝（亮） */
+  --hotel-navy-3: #3a5370;      /* 深海蓝（雾） */
+  --hotel-gold: #c9a96a;        /* 香槟金（强调色） */
+  --hotel-gold-2: #b89450;      /* 金（深） */
+  --hotel-gold-3: #a8874a;      /* 金（暗） */
+  --hotel-gold-light: #e6cf9a;  /* 金（浅） */
+  --hotel-cream: #faf7f1;       /* 米白（页面底色） */
+  --hotel-ink: #2c313a;         /* 深墨（正文） */
+
+  /* —— 常用渐变 —— */
+  --hotel-grad-gold: linear-gradient(135deg, #c9a96a 0%, #e6cf9a 50%, #a8874a 100%);
+  --hotel-grad-gold-2: linear-gradient(135deg, #b89450 0%, #d9bc7f 100%);
+  --hotel-grad-navy: linear-gradient(135deg, #10233b 0%, #1d3a5f 100%);
+  --hotel-grad-hero: linear-gradient(135deg, #0e1c2e 0%, #1c3350 55%, #3a5370 100%);
+
+  /* —— 阴影 —— */
+  --hotel-shadow: 0 8px 30px rgba(16, 35, 59, 0.16);
+  --hotel-shadow-gold: 0 8px 22px rgba(201, 169, 106, 0.4);
+}
+
+body {
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  /* 全局背景：淡金渐变 + 装饰光斑，避免纯色单调 */
+  background:
+    radial-gradient(1100px 520px at 88% -8%, rgba(201, 169, 106, 0.13), transparent 60%),
+    radial-gradient(900px 480px at 8% 22%, rgba(61, 90, 128, 0.07), transparent 55%),
+    radial-gradient(700px 420px at 55% 92%, rgba(201, 169, 106, 0.09), transparent 60%),
+    linear-gradient(180deg, #faf7f1 0%, #f6f0e4 55%, #f3ecdd 100%);
+  background-attachment: fixed;
+  color: var(--hotel-ink);
+  min-height: 100vh;
+}
+
+/* 标题使用衬线体，契合酒店典雅气质 */
+h1,
+h2,
+h3,
+.brand-title {
+  font-family: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  letter-spacing: 0.02em;
+}
+
+/* 金色滚动条，呼应主题 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1ece2;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--hotel-gold);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hotel-gold-3);
+}

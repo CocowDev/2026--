@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { restaurantAPI } from '../api'
 import DiningList from '../components/DiningList.vue'
-import type { Restaurant } from '../types'
+import type { Restaurant, Dish } from '../types'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
@@ -18,6 +18,11 @@ const numberOfGuests = ref('2')
 const specialRequests = ref('')
 const loading = ref(false)
 
+// —— 菜品选择（第二步）——
+const dishes = ref<Dish[]>([])
+const loadingDishes = ref(false)
+const dishQuantities = ref<Record<number, number>>({})
+
 const getToday = () => {
   const today = new Date()
   return today.toISOString().split('T')[0]
@@ -29,10 +34,52 @@ onMounted(async () => {
   reservationDate.value = getToday()
 })
 
-const handleRestaurantSelect = (restaurant: Restaurant | null) => {
+// 选择餐厅后加载该餐厅菜品
+const handleRestaurantSelect = async (restaurant: Restaurant | null) => {
   selectedRestaurant.value = restaurant
   reservationTime.value = ''
+  dishes.value = []
+  dishQuantities.value = {}
+  if (restaurant) {
+    loadingDishes.value = true
+    try {
+      const res = await restaurantAPI.getDishes(restaurant.id)
+      dishes.value = res.data.data || []
+    } catch {
+      dishes.value = []
+    } finally {
+      loadingDishes.value = false
+    }
+  }
 }
+
+const dishQuantity = (dishId: number): number => dishQuantities.value[dishId] || 0
+
+const addDish = (dishId: number) => {
+  dishQuantities.value = { ...dishQuantities.value, [dishId]: dishQuantity(dishId) + 1 }
+}
+
+const removeDish = (dishId: number) => {
+  const qty = dishQuantity(dishId)
+  if (qty <= 1) {
+    const next = { ...dishQuantities.value }
+    delete next[dishId]
+    dishQuantities.value = next
+  } else {
+    dishQuantities.value = { ...dishQuantities.value, [dishId]: qty - 1 }
+  }
+}
+
+// 已选菜品列表（含合计金额）
+const selectedDishList = computed(() =>
+  dishes.value
+    .filter(d => dishQuantity(d.id) > 0)
+    .map(d => ({ dishId: d.id, quantity: dishQuantity(d.id), name: d.name, price: d.price }))
+)
+
+const totalDishPrice = computed(() =>
+  selectedDishList.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+)
 
 const handleReservation = async () => {
   if (!authStore.isLoggedIn) {
@@ -60,7 +107,8 @@ const handleReservation = async () => {
       reservationTime: reservationTime.value,
       numberOfGuests: Number(numberOfGuests.value),
       specialRequests: specialRequests.value,
-      userId: authStore.user!.id
+      userId: authStore.user!.id,
+      dishes: selectedDishList.value.map(({ dishId, quantity }) => ({ dishId, quantity })),
     })
     
     ElMessage.success('预订成功！')
@@ -71,6 +119,8 @@ const handleReservation = async () => {
       reservationTime.value = ''
       numberOfGuests.value = '2'
       specialRequests.value = ''
+      dishes.value = []
+      dishQuantities.value = {}
     }, 1500)
   } catch (error) {
     ElMessage.error('预订失败，请重试')
@@ -122,11 +172,40 @@ const handleReservation = async () => {
                 <img 
                   :src="selectedRestaurant.imageUrl" 
                   :alt="selectedRestaurant.name"
-                  @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/restaurant-fallback/600/400'"
+                  @error="($event.target as HTMLImageElement).src = '/images/restaurant-luxury.jpg'"
                 >
                 <div class="preview-info">
                   <p>{{ selectedRestaurant.description }}</p>
                 </div>
+              </div>
+              
+              <!-- 第二步：选择菜品（点选数量） -->
+              <div class="dish-section">
+                <div class="dish-header">
+                  <h4>选择菜品</h4>
+                  <span class="dish-hint">点击 +/- 调整数量，可多选</span>
+                </div>
+                <div v-if="loadingDishes" class="dish-loading">菜品加载中...</div>
+                <div v-else-if="dishes.length" class="dish-list">
+                  <div v-for="dish in dishes" :key="dish.id" class="dish-item">
+                    <img :src="dish.imageUrl" :alt="dish.name" class="dish-img"
+                         @error="($event.target as HTMLImageElement).src = '/images/dish-01.jpg'">
+                    <div class="dish-info">
+                      <span class="dish-name">{{ dish.name }}</span>
+                      <span class="dish-desc">{{ dish.description }}</span>
+                      <span class="dish-price">¥{{ dish.price }}</span>
+                    </div>
+                    <div class="dish-qty">
+                      <button type="button" class="qty-btn" :disabled="dishQuantity(dish.id) === 0" @click="removeDish(dish.id)">−</button>
+                      <span class="qty-num">{{ dishQuantity(dish.id) }}</span>
+                      <button type="button" class="qty-btn" @click="addDish(dish.id)">+</button>
+                    </div>
+                  </div>
+                  <div v-if="selectedDishList.length" class="dish-total">
+                    已选 {{ selectedDishList.length }} 种菜品，合计 <strong>¥{{ totalDishPrice.toFixed(2) }}</strong>
+                  </div>
+                </div>
+                <div v-else class="dish-loading">该餐厅暂无菜品</div>
               </div>
               
               <form @submit.prevent="handleReservation" class="reservation-form">
@@ -208,9 +287,9 @@ const handleReservation = async () => {
 
 .hero-section {
   position: relative;
-  padding: 120px 24px 140px;
+  padding: 84px 24px 100px;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #0e1c2e 0%, #1c3350 55%, #3a5370 100%);
 }
 
 .hero-bg {
@@ -218,7 +297,7 @@ const handleReservation = async () => {
   inset: 0;
   background:
     radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35) 0%, transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.3) 0%, transparent 45%);
+    radial-gradient(circle at 80% 70%, rgba(212, 176, 110, 0.3) 0%, transparent 45%);
   pointer-events: none;
 }
 
@@ -333,7 +412,7 @@ const handleReservation = async () => {
 
 .form-header {
   padding: 24px 32px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #c9a96a, #b89450);
   color: #fff;
 }
 
@@ -404,8 +483,8 @@ const handleReservation = async () => {
 }
 
 .form-input:focus {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+  border-color: #b89450;
+  box-shadow: 0 0 0 4px rgba(184, 148, 80, 0.1);
 }
 
 .form-textarea {
@@ -422,20 +501,158 @@ const handleReservation = async () => {
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  box-shadow: 0 10px 24px rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 50%, #e6cf9a 100%);
+  box-shadow: 0 10px 24px rgba(184, 148, 80, 0.4);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   align-self: flex-start;
 }
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(139, 92, 246, 0.55);
+  box-shadow: 0 14px 32px rgba(184, 148, 80, 0.55);
 }
 
 .submit-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+/* —— 菜品选择区 —— */
+.dish-section {
+  margin: 24px 0;
+  padding: 18px 20px;
+  background: #faf9f6;
+  border: 1px solid #efe8da;
+  border-radius: 14px;
+}
+
+.dish-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.dish-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #10233b;
+}
+
+.dish-hint {
+  font-size: 12px;
+  color: #9a917f;
+}
+
+.dish-loading {
+  padding: 16px;
+  text-align: center;
+  color: #9a917f;
+  font-size: 14px;
+}
+
+.dish-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dish-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #f0eadc;
+}
+
+.dish-img {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.dish-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dish-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c313a;
+}
+
+.dish-desc {
+  font-size: 12px;
+  color: #9a917f;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dish-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #b89450;
+}
+
+.dish-qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #d8c9a8;
+  background: #fff;
+  color: #b89450;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background: #c9a96a;
+  color: #fff;
+}
+
+.qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.qty-num {
+  min-width: 18px;
+  text-align: center;
+  font-weight: 600;
+  color: #2c313a;
+}
+
+.dish-total {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #e3d9c2;
+  text-align: right;
+  font-size: 14px;
+  color: #6b6456;
+}
+
+.dish-total strong {
+  color: #b89450;
+  font-size: 16px;
 }
 
 @media (max-width: 968px) {

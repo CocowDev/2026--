@@ -24,7 +24,7 @@ const emit = defineEmits<{
             :src="room.imageUrl"
             class="room-image"
             :alt="room.title"
-            @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/hotel-room/600/400'"
+            @error="($event.target as HTMLImageElement).src = '/images/room-single.jpg'"
           >
           <div class="room-media-overlay"></div>
           <div class="room-price-tag">
@@ -98,7 +98,7 @@ const emit = defineEmits<{
 .room-card.is-selected {
   transform: translateY(-10px);
   box-shadow: 0 30px 60px -15px rgba(99, 102, 241, 0.45),
-              0 15px 30px -10px rgba(236, 72, 153, 0.3);
+              0 15px 30px -10px rgba(212, 176, 110, 0.3);
 }
 
 .room-media {
@@ -145,9 +145,9 @@ const emit = defineEmits<{
   color: #fff;
   font-weight: 700;
   letter-spacing: 0.3px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 55%, #d4b06e 100%);
   border-radius: 999px;
-  box-shadow: 0 10px 24px -8px rgba(139, 92, 246, 0.55),
+  box-shadow: 0 10px 24px -8px rgba(184, 148, 80, 0.55),
               inset 0 1px 0 rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -156,7 +156,7 @@ const emit = defineEmits<{
 
 .room-card:hover .room-price-tag {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 14px 28px -8px rgba(139, 92, 246, 0.7);
+  box-shadow: 0 14px 28px -8px rgba(184, 148, 80, 0.7);
 }
 
 .price-symbol {
@@ -248,8 +248,8 @@ const emit = defineEmits<{
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #ec4899 100%);
-  box-shadow: 0 10px 24px -10px rgba(139, 92, 246, 0.6);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 55%, #d4b06e 100%);
+  box-shadow: 0 10px 24px -10px rgba(184, 148, 80, 0.6);
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.3s ease,
               filter 0.3s ease,
@@ -264,7 +264,7 @@ const emit = defineEmits<{
 
 .room-action:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 30px -10px rgba(139, 92, 246, 0.75);
+  box-shadow: 0 16px 30px -10px rgba(184, 148, 80, 0.75);
   filter: brightness(1.05);
 }
 
@@ -290,7 +290,7 @@ const emit = defineEmits<{
   inset: -3px;
   border-radius: 22px;
   padding: 3px;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 50%, #d4b06e 100%);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);

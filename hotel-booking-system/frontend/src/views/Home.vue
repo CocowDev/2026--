@@ -74,7 +74,8 @@ onMounted(async () => {
 })
 
 const handleBookService = (_service: any) => {
-  router.push('/contact')
+  // 跳转预订页并自动切换到"服务预订"分类，不再跳转联系我们
+  router.push('/room-booking?tab=services')
 }
 </script>
 
@@ -270,11 +271,11 @@ const handleBookService = (_service: any) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #d4b06e 100%);
   border-radius: 14px;
   color: #fff;
   font-size: 24px;
-  box-shadow: 0 8px 20px -6px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 8px 20px -6px rgba(184, 148, 80, 0.5);
 }
 
 .feature-card h3 {
@@ -351,9 +352,9 @@ const handleBookService = (_service: any) => {
   color: #fff;
   font-weight: 700;
   font-size: 14px;
-  background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #d4b06e 100%);
   border-radius: 999px;
-  box-shadow: 0 6px 16px -4px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 6px 16px -4px rgba(184, 148, 80, 0.5);
 }
 
 .room-price-tag .price-symbol {
@@ -415,7 +416,7 @@ const handleBookService = (_service: any) => {
 
 .restaurant-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px -12px rgba(236, 72, 153, 0.2);
+  box-shadow: 0 20px 40px -12px rgba(212, 176, 110, 0.2);
 }
 
 .restaurant-media {
@@ -470,7 +471,7 @@ const handleBookService = (_service: any) => {
 
 .cta {
   padding: 80px 0;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 50%, #d4b06e 100%);
   text-align: center;
   color: #fff;
 }
@@ -509,7 +510,7 @@ const handleBookService = (_service: any) => {
 
 .btn-primary {
   background: #fff;
-  color: #6366f1;
+  color: #c9a96a;
   box-shadow: 0 10px 30px -10px rgba(255, 255, 255, 0.4);
 }
 

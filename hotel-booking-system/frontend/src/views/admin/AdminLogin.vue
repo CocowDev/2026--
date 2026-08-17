@@ -153,7 +153,7 @@ const goBack = () => router.push('/');
   color: #1f2d3d;
   margin: 0 0 8px;
   font-weight: 700;
-  background: linear-gradient(135deg, #1f2d3d, #409eff);
+  background: linear-gradient(135deg, #1f2d3d, #b89450);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -186,7 +186,7 @@ const goBack = () => router.push('/');
   background: #f8fafc;
 }
 .input-wrapper:focus-within {
-  border-color: #409eff;
+  border-color: #b89450;
   background: #fff;
   box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.1);
 }
@@ -219,7 +219,7 @@ const goBack = () => router.push('/');
 
 .btn-submit {
   height: 50px;
-  background: linear-gradient(135deg, #409eff, #2a5298);
+  background: linear-gradient(135deg, #b89450, #2a5298);
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -263,7 +263,7 @@ const goBack = () => router.push('/');
 }
 .btn-back:hover {
   background: #f5f7fa;
-  color: #409eff;
+  color: #b89450;
   border-color: #c6e2ff;
 }
 

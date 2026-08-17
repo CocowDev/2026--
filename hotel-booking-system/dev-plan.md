@@ -19,6 +19,15 @@
 - [x] .gitignore 配置优化
 - [x] Git 全局用户配置
 
+## 功能增强（2026-08-16）
+
+- [x] 餐饮预订两步流程：dishes/booking_dishes 表 + 菜品接口 + 前端选菜点选（数量/合计）
+- [x] 服务预订：POST /bookings/service + 前端预约弹窗 + Home 入口跳转服务分类
+- [x] 个人中心 /profile：我的订单列表 + 本人取消；GET /bookings 权限隔离（用户仅本人/管理员全部）
+- [x] 后台待处理预订提醒角标（30s 轮询）
+- [x] 布局紧凑化 + 修复餐饮 INSERT 列名 bug
+- [x] 后端质量提升：Service 接口与实现分离（AuthService/BookingService/UserService + Impl）+ 全量写操作 @Transactional 事务治理（含餐饮三步写入事务）
+
 ## 待办
 
 ### P1 设计缺陷（影响数据正确性）
@@ -42,6 +51,6 @@
 
 ### 测试覆盖
 
-- [ ] 后端引入 JUnit 5 + Mockito，为 AuthService/BookingService 编写单元测试
-- [ ] 前端引入 Vitest + @vue/test-utils，补充组件测试
-- [ ] 前端 package.json 增加 test 脚本
+- [x] 后端引入 JUnit 5 + Mockito，为 AuthService/BookingService 编写单元测试 → 已完成（AuthServiceTest 8 例 + BookingServiceTest 13 例，共 21 例全通过）
+- [x] 前端引入 Vitest + @vue/test-utils，补充组件测试 → 已完成（Login/Booking/DiningList/Dashboard 共 11 例全通过）
+- [x] 前端 package.json 增加 test 脚本 → 已完成（npm run test / npm run test:watch）

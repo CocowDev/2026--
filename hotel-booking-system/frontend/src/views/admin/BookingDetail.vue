@@ -205,7 +205,7 @@ const handleStatusChange = async (status: string) => {
 
 .page-title {
   font-size: 1.8rem;
-  color: #1a1a2e;
+  color: #10233b;
 }
 
 .btn {
@@ -311,8 +311,8 @@ const handleStatusChange = async (status: string) => {
 
 .detail-card h3 {
   margin-bottom: 1rem;
-  color: #1a1a2e;
-  border-bottom: 2px solid #e94560;
+  color: #10233b;
+  border-bottom: 2px solid #c9a96a;
   padding-bottom: 0.5rem;
 }
 
@@ -326,7 +326,7 @@ const handleStatusChange = async (status: string) => {
 .info-icon {
   width: 20px;
   height: 20px;
-  color: #e94560;
+  color: #c9a96a;
 }
 
 .info-content {
@@ -368,7 +368,7 @@ const handleStatusChange = async (status: string) => {
 
 .room-info .price {
   font-weight: bold;
-  color: #e94560;
+  color: #c9a96a;
 }
 
 .price-breakdown {
@@ -393,7 +393,7 @@ const handleStatusChange = async (status: string) => {
   padding: 0.5rem 0;
   font-size: 1.2rem;
   font-weight: bold;
-  color: #e94560;
+  color: #c9a96a;
 }
 
 .special-requests {
@@ -405,7 +405,7 @@ const handleStatusChange = async (status: string) => {
 .request-icon {
   width: 24px;
   height: 24px;
-  color: #e94560;
+  color: #c9a96a;
 }
 
 .detail-footer {

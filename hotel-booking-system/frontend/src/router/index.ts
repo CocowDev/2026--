@@ -28,6 +28,11 @@ const routes = [
     component: () => import('../views/News.vue'),
   },
   {
+    path: '/search',
+    name: 'Search',
+    component: () => import('../views/Search.vue'),
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('../views/About.vue'),
@@ -50,10 +55,16 @@ const routes = [
     meta: { guest: true },
   },
   {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('../views/Profile.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/admin/login',
     name: 'AdminLogin',
     component: () => import('../views/admin/AdminLogin.vue'),
-    meta: { guest: true },
+    // 注意：不加 guest 标记——普通用户已登录时也需能访问此页（切换到管理员身份）
   },
   {
     path: '/admin',
@@ -108,8 +119,16 @@ router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore();
   
   if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    // 未登录或普通用户访问后台 → 引导到管理员登录页（普通用户已登录也允许进入登录页）
     next({ path: '/admin/login', query: { redirect: to.fullPath } });
+  } else if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    // 需要登录的页面（如个人中心）未登录 → 跳用户登录页
+    next({ path: '/login', query: { redirect: to.fullPath } });
+  } else if (to.path === '/admin/login' && authStore.isAdmin) {
+    // 管理员已登录 → 无需再进登录页，直接进后台
+    next('/admin/dashboard');
   } else if (to.meta.guest && authStore.isLoggedIn) {
+    // 已登录用户访问登录/注册页 → 回首页（/admin/login 无 guest 标记，不受此规则影响）
     next('/');
   } else {
     next();

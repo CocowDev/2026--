@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/auth'
 import { useBookingStore } from '../stores/booking'
 import { roomTypeAPI } from '../api'
 import { formatMoney } from '../utils/money'
+import { validatePhone } from '../utils/validation'
 import RoomList from '../components/RoomList.vue'
 import type { RoomType } from '../types'
 import { Calendar, Users, MessageSquare, CreditCard, CheckCircle } from 'lucide-vue-next'
@@ -45,6 +46,9 @@ const nights = computed(() => {
   return Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24))
 })
 
+// 提交加载态：提交期间按钮禁用，防止重复下单
+const loading = ref(false)
+
 onMounted(async () => {
   const res = await roomTypeAPI.getAll()
   roomTypes.value = res.data.data
@@ -79,6 +83,13 @@ const handleSubmit = async () => {
     ElMessage.error('离店日期必须晚于入住日期')
     return
   }
+  // 联系电话格式校验
+  if (form.value.guestPhone && !validatePhone(form.value.guestPhone)) {
+    ElMessage.error('请输入有效的手机号')
+    return
+  }
+  
+  loading.value = true
   
   try {
     // 注意：userId 由后端从登录态解析，totalPrice 由后端按房型单价计算，前端无需提交
@@ -96,6 +107,8 @@ const handleSubmit = async () => {
     router.push('/')
   } catch (error) {
     ElMessage.error('预订失败，请重试')
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -215,10 +228,10 @@ const handleSubmit = async () => {
             <button 
               class="btn btn-primary btn-large" 
               @click="handleSubmit"
-              :disabled="!selectedRoom || !form.checkInDate || !form.checkOutDate"
+              :disabled="!selectedRoom || !form.checkInDate || !form.checkOutDate || loading"
             >
               <CreditCard class="btn-icon" />
-              确认预订
+              {{ loading ? '提交中...' : '确认预订' }}
             </button>
           </div>
         </div>
@@ -365,7 +378,7 @@ const handleSubmit = async () => {
 .label-icon {
   width: 16px;
   height: 16px;
-  color: #6366f1;
+  color: #c9a96a;
 }
 
 .form-control {
@@ -380,7 +393,7 @@ const handleSubmit = async () => {
 
 .form-control:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #c9a96a;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
@@ -413,14 +426,14 @@ const handleSubmit = async () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 55%, #d4b06e 100%);
   color: #fff;
-  box-shadow: 0 10px 30px -10px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 10px 30px -10px rgba(184, 148, 80, 0.5);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 14px 40px -10px rgba(139, 92, 246, 0.6);
+  box-shadow: 0 14px 40px -10px rgba(184, 148, 80, 0.6);
 }
 
 .btn-primary:disabled {
@@ -498,7 +511,7 @@ const handleSubmit = async () => {
 
 .summary-divider {
   height: 2px;
-  background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #d4b06e 100%);
   margin: 16px 0;
   border-radius: 999px;
 }
@@ -519,7 +532,7 @@ const handleSubmit = async () => {
 .total-price {
   font-size: 28px;
   font-weight: 800;
-  color: #6366f1;
+  color: #c9a96a;
 }
 
 .booking-tips {

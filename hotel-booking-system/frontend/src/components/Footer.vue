@@ -43,7 +43,7 @@ import { Phone, Mail, MapPin } from 'lucide-vue-next';
 
 <style scoped>
 .footer {
-  background: #1a1a2e;
+  background: #10233b;
   color: #fff;
   padding: 2rem 0;
   margin-top: auto;
@@ -68,7 +68,7 @@ import { Phone, Mail, MapPin } from 'lucide-vue-next';
 
 .footer-section h3 {
   margin-bottom: 1rem;
-  color: #e94560;
+  color: #c9a96a;
 }
 
 .contact-item {
@@ -81,7 +81,7 @@ import { Phone, Mail, MapPin } from 'lucide-vue-next';
 .contact-icon {
   width: 18px;
   height: 18px;
-  color: #e94560;
+  color: #c9a96a;
 }
 
 .footer-section ul {
@@ -100,7 +100,7 @@ import { Phone, Mail, MapPin } from 'lucide-vue-next';
 }
 
 .footer-section ul li a:hover {
-  color: #e94560;
+  color: #c9a96a;
 }
 
 .footer-section p {

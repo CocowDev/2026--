@@ -40,15 +40,26 @@
 ### 预订列表
 - **GET** `/bookings?page=&pageSize=&status=&keyword=`
 - 需认证
+- **权限隔离**：管理员返回全部订单；普通用户仅返回本人订单（后端按当前登录用户过滤）
 - 响应 data: `{ "list": [BookingVO], "total": number }`
 - BookingVO 字段（联表展示，含用户名/房型名）:
   `{ "id", "userId", "roomTypeId", "restaurantId", "type", "guestName", "guestPhone", "guestEmail", "checkInDate": "yyyy-MM-dd", "checkOutDate": "yyyy-MM-dd", "guestCount", "specialRequests", "status", "totalPrice": number, "createdAt", "updatedAt", "userName", "userPhone", "roomTitle", "roomPrice": number, "roomImageUrl", "roomDescription" }`
-- `type` 取值: `room`（客房）/ `restaurant`（餐饮）；餐饮预订的 `roomTitle` 等房型字段为 null
+- `type` 取值: `room`（客房）/ `restaurant`（餐饮）/ `service`（服务）；餐饮/服务预订的房型字段为 null
 
 ### 预订详情
 - **GET** `/bookings/{id}`
 - 需认证
-- 响应 data: 单个 BookingVO（同列表元素结构）
+- 响应 data: 单个 BookingVO；**餐饮预订**额外含 `dishes` 字段（所选菜品数组 `[{ dishId, dishName, price, quantity }]`）
+
+### 用户取消预订（个人中心）
+- **POST** `/bookings/{id}/cancel`
+- 需认证；仅限**本人**且订单状态为 `pending` 时可取消，成功后状态置为 `cancelled`
+
+### 服务预订（SPA/健身/泳池等）
+- **POST** `/bookings/service`
+- 需认证（userId 由后端从登录态解析）
+- 请求体: `{ "serviceName": "string", "price": number, "serviceDate": "yyyy-MM-dd", "guests": number, "guestName": "string", "guestPhone": "string", "remark": "string"(可选) }`
+- 说明：写入 bookings 表 `type='service'`，`totalPrice` 为服务价格
 
 ### 创建预订
 - **POST** `/bookings`
@@ -105,11 +116,17 @@
 - 响应 data: `[{ "id", "name", "description", "imageUrl", "createdAt", "updatedAt" }]`
 - **字段名为 `name`**（前端已统一，不得使用 `title`）；餐厅无价格字段
 
+### 餐厅菜品列表
+- **GET** `/restaurants/{id}/dishes`
+- 无需认证
+- 响应 data: `[{ "id", "restaurantId", "name", "description", "price": number, "imageUrl", "createdAt", "updatedAt" }]`
+- 餐饮预订第二步：选择餐厅后加载该餐厅菜品点选
+
 ### 餐厅预订
 - **POST** `/restaurants/book`
 - 需认证
-- 请求体: `{ "restaurantId": number, "reservationDate": "string", "reservationTime": "string", "numberOfGuests": number, "specialRequests": "string", "userId": number }`
-- 说明：写入 bookings 表 `type='restaurant'`，`roomTypeId` 为 NULL，`totalPrice` 为 0
+- 请求体: `{ "restaurantId": number, "reservationDate": "string", "reservationTime": "string", "numberOfGuests": number, "specialRequests": "string", "userId": number, "dishes": [{ "dishId": number, "quantity": number }](可选) }`
+- 说明：写入 bookings 表 `type='restaurant'`，`roomTypeId` 为 NULL；携带 `dishes` 时写入 booking_dishes 关联表，`totalPrice` 按菜品单价×数量计算
 
 ## 仪表盘接口
 

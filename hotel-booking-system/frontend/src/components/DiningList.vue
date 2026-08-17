@@ -24,7 +24,7 @@ const emit = defineEmits<{
             :src="restaurant.imageUrl"
             class="dining-image"
             :alt="restaurant.name"
-            @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/restaurant-fallback/600/400'"
+            @error="($event.target as HTMLImageElement).src = '/images/restaurant-luxury.jpg'"
           >
           <div class="dining-media-overlay"></div>
           <div class="dining-check" v-if="selectedId === restaurant.id">
@@ -64,7 +64,7 @@ const emit = defineEmits<{
 .dining-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
+  gap: 22px;
 }
 
 .dining-cell {
@@ -87,13 +87,13 @@ const emit = defineEmits<{
 .dining-card:hover {
   transform: translateY(-10px);
   box-shadow: 0 28px 55px -15px rgba(15, 23, 42, 0.28),
-              0 12px 24px -10px rgba(236, 72, 153, 0.22);
+              0 12px 24px -10px rgba(212, 176, 110, 0.22);
 }
 
 .dining-card.is-selected {
   transform: translateY(-10px);
-  box-shadow: 0 30px 60px -15px rgba(236, 72, 153, 0.4),
-              0 15px 30px -10px rgba(251, 146, 60, 0.25);
+  box-shadow: 0 30px 60px -15px rgba(212, 176, 110, 0.4),
+              0 15px 30px -10px rgba(201, 169, 106, 0.25);
 }
 
 .dining-media {
@@ -158,7 +158,7 @@ const emit = defineEmits<{
 }
 
 .dining-body {
-  padding: 20px 22px 22px;
+  padding: 16px 18px 18px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -199,8 +199,8 @@ const emit = defineEmits<{
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
-  box-shadow: 0 10px 24px -10px rgba(236, 72, 153, 0.55);
+  background: linear-gradient(135deg, #c9a96a 0%, #d4b06e 100%);
+  box-shadow: 0 10px 24px -10px rgba(212, 176, 110, 0.55);
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.3s ease,
               filter 0.3s ease;
@@ -214,7 +214,7 @@ const emit = defineEmits<{
 
 .dining-action:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 30px -10px rgba(236, 72, 153, 0.7);
+  box-shadow: 0 16px 30px -10px rgba(212, 176, 110, 0.7);
   filter: brightness(1.05);
 }
 
@@ -240,7 +240,7 @@ const emit = defineEmits<{
   inset: -3px;
   border-radius: 22px;
   padding: 3px;
-  background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #d4b06e 100%);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);

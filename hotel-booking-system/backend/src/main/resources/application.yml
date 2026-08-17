@@ -1,5 +1,7 @@
 server:
   port: 3001
+  # 监听所有网卡地址，放开局域网访问（其他电脑/手机可访问后端接口）
+  address: 0.0.0.0
 
 spring:
   datasource:

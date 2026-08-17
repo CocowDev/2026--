@@ -53,7 +53,8 @@ const handleLogout = () => {
 
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
-    router.push({ path: '/news', query: { search: searchQuery.value.trim() } });
+    // 跳转聚合搜索页：模糊匹配房型/餐厅/菜品/新闻
+    router.push({ path: '/search', query: { q: searchQuery.value.trim() } });
     searchQuery.value = '';
     closeMenu();
   }
@@ -143,28 +144,12 @@ onUnmounted(() => {
             <router-link class="btn btn-primary" to="/register" @click="navigateTo('/register')">注册</router-link>
           </template>
           <template v-else>
-            <div class="user-chip">
+            <div class="user-chip" @click="navigateTo('/profile')" title="个人中心">
               <span class="user-avatar">{{ (authStore.user?.name || '?').charAt(0).toUpperCase() }}</span>
               <span class="user-name">{{ authStore.user?.name }}</span>
             </div>
             <button class="btn btn-ghost" @click="handleLogout">退出</button>
           </template>
-          <router-link
-            v-if="authStore.isAdmin"
-            class="btn btn-admin"
-            to="/admin/dashboard"
-            @click="navigateTo('/admin/dashboard')"
-          >
-            🛠️ 管理后台
-          </router-link>
-          <router-link
-            v-else
-            class="btn btn-admin"
-            to="/admin/login"
-            @click="navigateTo('/admin/login')"
-          >
-            🔐 管理后台
-          </router-link>
         </div>
       </div>
     </div>
@@ -183,13 +168,13 @@ onUnmounted(() => {
   backdrop-filter: saturate(180%) blur(18px);
   -webkit-backdrop-filter: saturate(180%) blur(18px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+  box-shadow: 0 8px 32px rgba(16, 35, 59, 0.08);
   transition: background 0.35s ease, box-shadow 0.35s ease, padding 0.35s ease;
 }
 
 .navbar-root.is-scrolled {
   background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 12px 40px rgba(31, 38, 135, 0.12);
+  box-shadow: 0 12px 40px rgba(16, 35, 59, 0.12);
   padding: 10px 24px;
 }
 
@@ -220,17 +205,17 @@ onUnmounted(() => {
   width: 42px;
   height: 42px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 50%, #e6cf9a 100%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  box-shadow: 0 8px 24px rgba(118, 75, 162, 0.35);
+  box-shadow: 0 8px 24px rgba(201, 169, 106, 0.35);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .brand:hover .brand-icon {
-  box-shadow: 0 12px 30px rgba(118, 75, 162, 0.5);
+  box-shadow: 0 12px 30px rgba(201, 169, 106, 0.5);
   transform: rotate(-6deg) scale(1.05);
 }
 
@@ -248,7 +233,7 @@ onUnmounted(() => {
 .brand-title {
   font-size: 20px;
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 50%, #a8874a 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -311,8 +296,8 @@ onUnmounted(() => {
 
 .nav-link.active {
   color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.45);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 100%);
+  box-shadow: 0 6px 18px rgba(201, 169, 106, 0.45);
 }
 
 .search-form {
@@ -327,13 +312,13 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 999px;
   padding: 4px 4px 4px 14px;
-  box-shadow: 0 4px 14px rgba(31, 38, 135, 0.06);
+  box-shadow: 0 4px 14px rgba(16, 35, 59, 0.06);
   transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 }
 
 .search-input-wrap:focus-within {
-  box-shadow: 0 6px 22px rgba(102, 126, 234, 0.2);
-  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 6px 22px rgba(201, 169, 106, 0.2);
+  border-color: rgba(201, 169, 106, 0.5);
   background: rgba(255, 255, 255, 0.95);
 }
 
@@ -366,14 +351,14 @@ onUnmounted(() => {
   color: #fff;
   font-weight: 600;
   font-size: 13.5px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 100%);
   transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
 }
 
 .search-btn:hover {
   transform: translateY(-1px);
   filter: brightness(1.05);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 16px rgba(201, 169, 106, 0.4);
 }
 
 .actions {
@@ -408,34 +393,20 @@ onUnmounted(() => {
 .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.7);
   color: #4c3a8b;
-  border-color: rgba(102, 126, 234, 0.4);
+  border-color: rgba(201, 169, 106, 0.4);
   transform: translateY(-1px);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f5576c 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 50%, #a8874a 100%);
   color: #fff;
-  box-shadow: 0 8px 22px rgba(245, 87, 108, 0.35);
+  box-shadow: 0 8px 22px rgba(168, 135, 74, 0.35);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-  box-shadow: 0 12px 28px rgba(245, 87, 108, 0.45);
-}
-
-.btn-admin {
-  background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
-  color: #fff !important;
-  box-shadow: 0 8px 22px rgba(24, 90, 157, 0.35);
-  font-size: 13px;
-  padding: 8px 16px;
-}
-
-.btn-admin:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
-  box-shadow: 0 12px 28px rgba(24, 90, 157, 0.45);
+  box-shadow: 0 12px 28px rgba(168, 135, 74, 0.45);
 }
 
 .user-chip {
@@ -446,7 +417,14 @@ onUnmounted(() => {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 14px rgba(31, 38, 135, 0.06);
+  box-shadow: 0 4px 14px rgba(16, 35, 59, 0.06);
+  cursor: pointer;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.user-chip:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 18px rgba(16, 35, 59, 0.12);
 }
 
 .user-avatar {
@@ -459,7 +437,7 @@ onUnmounted(() => {
   color: #fff;
   font-weight: 700;
   font-size: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 100%);
 }
 
 .user-name {
@@ -490,7 +468,7 @@ onUnmounted(() => {
 
 .hamburger:hover {
   background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 6px 18px rgba(31, 38, 135, 0.12);
+  box-shadow: 0 6px 18px rgba(16, 35, 59, 0.12);
 }
 
 .hamburger span {
@@ -498,7 +476,7 @@ onUnmounted(() => {
   height: 2.5px;
   width: 22px;
   margin: 0 auto;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #c9a96a, #b89450);
   border-radius: 2px;
   transition: transform 0.35s ease, opacity 0.25s ease;
 }
@@ -554,7 +532,7 @@ onUnmounted(() => {
     backdrop-filter: saturate(180%) blur(24px);
     -webkit-backdrop-filter: saturate(180%) blur(24px);
     border-left: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: -20px 0 60px rgba(31, 38, 135, 0.18);
+    box-shadow: -20px 0 60px rgba(16, 35, 59, 0.18);
     overflow-y: auto;
     z-index: 1001;
   }
@@ -604,8 +582,7 @@ onUnmounted(() => {
     gap: 10px;
   }
 
-  .btn,
-  .btn-admin {
+  .btn {
     width: 100%;
     padding: 12px 18px;
   }

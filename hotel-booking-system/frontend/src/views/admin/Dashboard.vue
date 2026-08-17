@@ -45,7 +45,7 @@ const load = async () => {
 onMounted(load);
 
 const statCards = computed(() => [
-  { label: '总预订数', value: stats.value.total, icon: '📋', color: '#409eff', bg: '#ecf5ff', path: '/admin/bookings' },
+  { label: '总预订数', value: stats.value.total, icon: '📋', color: '#b89450', bg: '#ecf5ff', path: '/admin/bookings' },
   { label: '待处理', value: stats.value.pending, icon: '⏳', color: '#e6a23c', bg: '#fdf6ec', path: '/admin/bookings' },
   { label: '已确认', value: stats.value.confirmed, icon: '✅', color: '#67c23a', bg: '#f0f9eb', path: '/admin/bookings' },
   { label: '已取消', value: stats.value.cancelled, icon: '❌', color: '#f56c6c', bg: '#fef0f0', path: '/admin/bookings' },
@@ -197,7 +197,7 @@ const getStatusClass = (status: string) => {
 .subtitle { margin: 6px 0 0; color: #909399; font-size: 13px; }
 
 .btn-refresh {
-  background: linear-gradient(135deg, #409eff, #667eea);
+  background: linear-gradient(135deg, #b89450, #c9a96a);
   color: #fff;
   border: none;
   padding: 9px 22px;
@@ -318,7 +318,7 @@ const getStatusClass = (status: string) => {
 .btn-link {
   background: none;
   border: none;
-  color: #409eff;
+  color: #b89450;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
@@ -326,7 +326,7 @@ const getStatusClass = (status: string) => {
 .btn-link:hover { text-decoration: underline; }
 
 .revenue-panel {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 100%);
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -409,7 +409,7 @@ const getStatusClass = (status: string) => {
   background: #f4f4f5;
   color: #606266;
 }
-.tag.room { background: #ecf5ff; color: #409eff; }
+.tag.room { background: #ecf5ff; color: #b89450; }
 .tag.dining { background: #fdf6ec; color: #e6a23c; }
 
 .status-badge {
@@ -421,11 +421,11 @@ const getStatusClass = (status: string) => {
 .status-badge.pending { background: #fdf6ec; color: #e6a23c; }
 .status-badge.confirmed { background: #f0f9eb; color: #67c23a; }
 .status-badge.cancelled { background: #fef0f0; color: #f56c6c; }
-.status-badge.completed { background: #ecf5ff; color: #409eff; }
+.status-badge.completed { background: #ecf5ff; color: #b89450; }
 
 .btn-view {
   background: #ecf5ff;
-  color: #409eff;
+  color: #b89450;
   border: none;
   padding: 5px 14px;
   border-radius: 6px;
@@ -434,5 +434,5 @@ const getStatusClass = (status: string) => {
   font-weight: 500;
   transition: all 0.2s;
 }
-.btn-view:hover { background: #409eff; color: #fff; }
+.btn-view:hover { background: #b89450; color: #fff; }
 </style>

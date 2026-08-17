@@ -7,7 +7,9 @@ const milestones = ref([
   { year: '2020', title: '全面升级', desc: '完成客房改造，提升服务品质' },
   { year: '2021', title: '智能入住', desc: '引入智能系统，实现自助入住' },
   { year: '2022', title: '绿色认证', desc: '获得绿色酒店认证，践行环保理念' },
-  { year: '2023', title: '数字转型', desc: '推出在线预订系统，拥抱数字化' }
+  { year: '2023', title: '数字转型', desc: '推出在线预订系统，拥抱数字化' },
+  { year: '2024', title: '餐饮焕新', desc: '四大主题餐厅升级，引入星级主厨团队' },
+  { year: '2025', title: '设施扩展', desc: '恒温泳池与智能健身房投入使用，服务全面升级' }
 ])
 
 const teamMembers = ref([
@@ -16,14 +18,18 @@ const teamMembers = ref([
   { name: '王志强', role: '客房部经理', avatar: 'https://picsum.photos/seed/team3/100/100' },
   { name: '陈燕', role: '餐饮部经理', avatar: 'https://picsum.photos/seed/team4/100/100' },
   { name: '刘建国', role: '工程部主管', avatar: 'https://picsum.photos/seed/team5/100/100' },
-  { name: '赵雪', role: '市场部经理', avatar: 'https://picsum.photos/seed/team6/100/100' }
+  { name: '赵雪', role: '市场部经理', avatar: 'https://picsum.photos/seed/team6/100/100' },
+  { name: '周婷', role: '前厅部经理', avatar: 'https://picsum.photos/seed/team7/100/100' },
+  { name: '孙磊', role: '财务部经理', avatar: 'https://picsum.photos/seed/team8/100/100' }
 ])
 
 const awards = ref([
   { title: '三星级旅游饭店', issuer: '国家旅游局', year: '2019' },
   { title: '绿色酒店认证', issuer: '中国饭店协会', year: '2022' },
   { title: '最佳服务奖', issuer: '省旅游协会', year: '2020' },
-  { title: '消费者满意单位', issuer: '市工商局', year: '2021' }
+  { title: '消费者满意单位', issuer: '市工商局', year: '2021' },
+  { title: '年度人气酒店', issuer: '市文旅局', year: '2023' },
+  { title: '文明服务示范单位', issuer: '省服务业联合会', year: '2024' }
 ])
 </script>
 
@@ -40,7 +46,9 @@ const awards = ref([
           了解<span class="title-gradient">星级酒店</span>
         </h1>
         <p class="hero-subtitle">
-          我们致力于为每一位宾客提供温馨舒适的入住体验，让您在旅途中感受到家的温暖
+          我们致力于为每一位宾客提供温馨舒适的入住体验，让您在旅途中感受到家的温暖。
+          从商务出行到家庭度假，从会议宴请到休闲养生，星级酒店以完善的设施与专业的服务，
+          为您打造超越期待的住宿体验。
         </p>
       </div>
     </section>
@@ -49,7 +57,7 @@ const awards = ref([
       <div class="container">
         <div class="intro-wrap">
           <div class="intro-image">
-            <img src="https://picsum.photos/seed/about-hotel/600/400" alt="酒店外观" @error="(($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/about-fallback/600/400')">
+            <img src="https://picsum.photos/seed/about-hotel/600/400" alt="酒店外观" @error="(($event.target as HTMLImageElement).src = '/images/room-ocean.jpg')">
             <div class="intro-shape"></div>
           </div>
           <div class="intro-content">
@@ -63,6 +71,11 @@ const awards = ref([
               五年来，我们始终坚持"宾客至上"的服务理念，不断提升服务品质，
               赢得了广大宾客的信赖与好评。无论是商务出差还是休闲度假，
               星级酒店都是您理想的选择。
+            </p>
+            <p class="section-desc">
+              酒店内设豪华客房与行政套房共 200 余间，配备全屋智能系统、恒温泳池、
+              智能健身房与多功能宴会厅；四大主题餐厅汇聚中西南风味，
+              由星级主厨团队倾力打造，为您呈现味蕾盛宴。
             </p>
             <div class="stats-row">
               <div class="stat-item">
@@ -96,23 +109,23 @@ const awards = ref([
         </div>
         <div class="mission-grid">
           <div class="mission-card">
-            <div class="mission-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <div class="mission-icon" style="background: linear-gradient(135deg, #c9a96a, #b89450);">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
             </div>
             <h3 class="mission-title">核心使命</h3>
-            <p class="mission-desc">为每一位宾客提供温馨、舒适、安全的入住体验，让旅途充满温暖与惊喜</p>
+            <p class="mission-desc">为每一位宾客提供温馨、舒适、安全的入住体验，让旅途充满温暖与惊喜。从每一次微笑问好到每一个细节服务，我们用心守护您的旅程品质</p>
           </div>
           <div class="mission-card">
-            <div class="mission-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+            <div class="mission-icon" style="background: linear-gradient(135deg, #e6cf9a, #a8874a);">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
             </div>
             <h3 class="mission-title">企业愿景</h3>
-            <p class="mission-desc">成为区域领先的星级酒店品牌，以卓越服务引领行业发展</p>
+            <p class="mission-desc">成为区域领先的星级酒店品牌，以卓越服务引领行业发展。立足当下、放眼未来，让"星级"成为品质与信赖的代名词</p>
           </div>
           <div class="mission-card">
             <div class="mission-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
@@ -121,7 +134,7 @@ const awards = ref([
               </svg>
             </div>
             <h3 class="mission-title">服务理念</h3>
-            <p class="mission-desc">用心服务，用情沟通，让每一位宾客感受到家的温暖与关怀</p>
+            <p class="mission-desc">用心服务，用情沟通，让每一位宾客感受到家的温暖与关怀。我们相信，好的服务藏在细节里——准时、周到、真诚、体贴</p>
           </div>
         </div>
       </div>
@@ -166,7 +179,7 @@ const awards = ref([
             class="team-card"
           >
             <div class="team-avatar">
-              <img :src="member.avatar" :alt="member.name" @error="(($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/team-fallback/100/100')">
+              <img :src="member.avatar" :alt="member.name" @error="(($event.target as HTMLImageElement).src = '/images/room-single.jpg')">
             </div>
             <h3 class="team-name">{{ member.name }}</h3>
             <p class="team-role">{{ member.role }}</p>
@@ -232,8 +245,8 @@ const awards = ref([
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.1);
+  color: #b89450;
+  background: rgba(184, 148, 80, 0.1);
   border-radius: 999px;
   margin-bottom: 16px;
 }
@@ -255,9 +268,9 @@ const awards = ref([
 
 .hero-section {
   position: relative;
-  padding: 120px 24px 140px;
+  padding: 84px 24px 100px;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #0e1c2e 0%, #1c3350 55%, #3a5370 100%);
 }
 
 .hero-bg {
@@ -265,7 +278,7 @@ const awards = ref([
   inset: 0;
   background:
     radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35) 0%, transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.3) 0%, transparent 45%);
+    radial-gradient(circle at 80% 70%, rgba(212, 176, 110, 0.3) 0%, transparent 45%);
   pointer-events: none;
 }
 
@@ -369,7 +382,7 @@ const awards = ref([
   right: -20px;
   width: 120px;
   height: 120px;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(240, 147, 251, 0.3));
+  background: linear-gradient(135deg, rgba(184, 148, 80, 0.3), rgba(240, 147, 251, 0.3));
   border-radius: 50%;
   filter: blur(40px);
 }
@@ -394,7 +407,7 @@ const awards = ref([
 .stat-value {
   font-size: 36px;
   font-weight: 800;
-  color: #8b5cf6;
+  color: #b89450;
   margin-bottom: 4px;
 }
 
@@ -474,7 +487,7 @@ const awards = ref([
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(180deg, #667eea, #f093fb);
+  background: linear-gradient(180deg, #c9a96a, #e6cf9a);
   transform: translateX(-50%);
 }
 
@@ -499,9 +512,9 @@ const awards = ref([
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #f093fb);
+  background: linear-gradient(135deg, #c9a96a, #e6cf9a);
   border: 4px solid #fff;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(184, 148, 80, 0.4);
   transform: translateX(-50%);
   z-index: 2;
 }
@@ -517,7 +530,7 @@ const awards = ref([
 .timeline-year {
   font-size: 28px;
   font-weight: 800;
-  color: #8b5cf6;
+  color: #b89450;
   margin-bottom: 8px;
 }
 
@@ -563,7 +576,7 @@ const awards = ref([
   margin: 0 auto 12px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid #8b5cf6;
+  border: 3px solid #b89450;
 }
 
 .team-avatar img {
@@ -629,8 +642,8 @@ const awards = ref([
 .award-year {
   display: inline-block;
   padding: 4px 12px;
-  background: rgba(139, 92, 246, 0.1);
-  color: #8b5cf6;
+  background: rgba(184, 148, 80, 0.1);
+  color: #b89450;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;

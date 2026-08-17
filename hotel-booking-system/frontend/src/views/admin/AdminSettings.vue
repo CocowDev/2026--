@@ -170,7 +170,7 @@ const importAll = async (e: Event) => {
   margin-bottom: 14px;
   padding-left: 14px;
   border-left: 4px solid transparent;
-  border-image: linear-gradient(180deg, #409eff, #66b1ff) 1;
+  border-image: linear-gradient(180deg, #b89450, #66b1ff) 1;
 }
 
 .card {
@@ -221,10 +221,10 @@ const importAll = async (e: Event) => {
 .data-desc { font-size: 13px; color: #909399; margin-bottom: 14px; line-height: 1.5; }
 .file-btn { display: inline-block; cursor: pointer; text-align: center; }
 
-.btn-primary { padding: 10px 22px; background: linear-gradient(135deg, #409eff, #667eea); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 500; box-shadow: 0 4px 12px rgba(64,158,255,0.25); transition: all 0.2s; }
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(64,158,255,0.35); }
+.btn-primary { padding: 10px 22px; background: linear-gradient(135deg, #b89450, #c9a96a); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 500; box-shadow: 0 4px 12px rgba(184,148,80,0.25); transition: all 0.2s; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(184,148,80,0.35); }
 .btn-default { padding: 10px 22px; background: #fff; color: #606266; border: 1.5px solid #e4e7ed; border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
-.btn-default:hover { color: #409eff; border-color: #c6e2ff; background: #f5f7fa; }
+.btn-default:hover { color: #b89450; border-color: #c6e2ff; background: #f5f7fa; }
 .btn-warning { padding: 10px 22px; background: #fdf6ec; color: #e6a23c; border: 1.5px solid #faecd8; border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
 .btn-warning:hover { background: #faecd8; }
 .btn-danger { padding: 10px 22px; background: linear-gradient(135deg, #f56c6c, #f78989); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 500; box-shadow: 0 4px 12px rgba(245,108,108,0.25); transition: all 0.2s; }

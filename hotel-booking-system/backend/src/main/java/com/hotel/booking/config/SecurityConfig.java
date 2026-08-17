@@ -34,9 +34,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/api/room-types/**", "/api/restaurants/**").permitAll()
                         // 预订导出（占位接口）：仅管理员
                         .requestMatchers(HttpMethod.GET, "/api/bookings/export").hasRole("ADMIN")
-                        // 预订查询/创建：登录用户即可
+                        // 预订查询/创建（含服务预订、取消）：登录用户即可
                         .requestMatchers(HttpMethod.GET, "/api/bookings/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/bookings").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/bookings/**").authenticated()
                         // 预订管理操作：仅管理员（PUT/PATCH/DELETE）
                         .requestMatchers(HttpMethod.PUT, "/api/bookings/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/bookings/**").hasRole("ADMIN")

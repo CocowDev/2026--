@@ -78,4 +78,29 @@ CREATE TABLE IF NOT EXISTS bookings (
     KEY idx_userId (userId),
     KEY idx_roomTypeId (roomTypeId),
     KEY idx_type_status (type, status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='预订表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='预订表（room-客房 / restaurant-餐饮 / service-服务）';
+
+-- 餐厅菜品表（餐饮预订第二步：选择餐厅后点选菜品）
+CREATE TABLE IF NOT EXISTS dishes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    restaurantId BIGINT NOT NULL COMMENT '所属餐厅ID',
+    name VARCHAR(100) NOT NULL COMMENT '菜品名称',
+    description VARCHAR(255) COMMENT '菜品描述',
+    price DECIMAL(10, 2) NOT NULL COMMENT '菜品单价',
+    imageUrl VARCHAR(255) DEFAULT NULL COMMENT '菜品图片',
+    createdAt DATETIME DEFAULT NULL,
+    updatedAt DATETIME DEFAULT NULL,
+    KEY idx_restaurantId (restaurantId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='餐厅菜品表';
+
+-- 预订-菜品关联表（餐饮预订所选菜品及数量）
+CREATE TABLE IF NOT EXISTS booking_dishes (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    bookingId BIGINT NOT NULL COMMENT '预订ID',
+    dishId BIGINT NOT NULL COMMENT '菜品ID',
+    dishName VARCHAR(100) NOT NULL COMMENT '菜品名称（冗余存储便于展示）',
+    price DECIMAL(10, 2) NOT NULL COMMENT '菜品单价（冗余存储）',
+    quantity INT NOT NULL DEFAULT 1 COMMENT '数量',
+    KEY idx_bookingId (bookingId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='预订-菜品关联表';
+

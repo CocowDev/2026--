@@ -56,6 +56,26 @@ npm run dev
 - 管理后台：http://localhost:5173/admin/login（admin/admin123）
 - API：http://localhost:3001/api
 
+## 运行测试
+
+### 后端单元测试（JUnit 5 + Mockito，21 个用例）
+
+```powershell
+cd backend
+.\mvnw.cmd test
+```
+
+### 前端组件测试（Vitest + @vue/test-utils，11 个用例）
+
+```powershell
+cd frontend
+npm install
+npm run test        # 一键执行全部组件测试
+npm run test:watch  # 监听模式，改动自动重跑
+```
+
+测试文件位置：后端 `backend/src/test/java/`，前端 `frontend/src/**/*.test.ts`（与组件同目录）。
+
 ## 项目结构
 
 ```

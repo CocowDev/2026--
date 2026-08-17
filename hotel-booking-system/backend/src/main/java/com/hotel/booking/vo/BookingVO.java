@@ -1,10 +1,12 @@
 package com.hotel.booking.vo;
 
+import com.hotel.booking.entity.BookingDish;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 预订列表/详情联表展示 VO
@@ -56,5 +58,8 @@ public class BookingVO {
 
     /** 房型描述（room_types.description） */
     private String roomDescription;
+
+    /** 餐饮预订所选菜品（详情接口补查 booking_dishes，非餐饮单为 null） */
+    private List<BookingDish> dishes;
 
 }

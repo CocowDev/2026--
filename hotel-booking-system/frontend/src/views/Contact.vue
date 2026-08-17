@@ -14,18 +14,20 @@ const phone = ref('')
 const message = ref('')
 const errors = ref<FormErrors>({})
 const submitMessage = ref('')
+// 提交加载态：模拟提交延迟，按钮禁用防重复提交
+const loading = ref(false)
 
 const contactCards = [
   {
     title: '酒店地址',
     icon: '🏨',
-    gradient: 'linear-gradient(135deg, #667eea, #764ba2)',
+    gradient: 'linear-gradient(135deg, #c9a96a, #b89450)',
     details: ['市中心繁华商业区XX路XX号', '距火车站 5 公里', '距机场 25 公里']
   },
   {
     title: '联系电话',
     icon: '📞',
-    gradient: 'linear-gradient(135deg, #f093fb, #f5576c)',
+    gradient: 'linear-gradient(135deg, #e6cf9a, #a8874a)',
     details: ['前台：400-888-8888', '预订：400-888-8889', '餐饮：400-888-8890']
   },
   {
@@ -50,7 +52,7 @@ const validatePhone = (phone: string) => {
   return /^1[3-9]\d{9}$/.test(phone)
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   errors.value = {}
   submitMessage.value = ''
 
@@ -73,6 +75,11 @@ const handleSubmit = () => {
   if (Object.keys(errors.value).length > 0) {
     return
   }
+
+  // 模拟提交：加载态反馈，防重复提交
+  loading.value = true
+  await new Promise(resolve => setTimeout(resolve, 800))
+  loading.value = false
 
   submitMessage.value = '感谢您的留言，我们会尽快回复您！'
   name.value = ''
@@ -222,8 +229,8 @@ const handleSubmit = () => {
               <div v-if="errors.message" class="error-msg">{{ errors.message }}</div>
             </div>
 
-            <button type="submit" class="submit-btn">
-              提交留言
+            <button type="submit" class="submit-btn" :disabled="loading">
+              {{ loading ? '提交中...' : '提交留言' }}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -294,8 +301,8 @@ const handleSubmit = () => {
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.1);
+  color: #b89450;
+  background: rgba(184, 148, 80, 0.1);
   border-radius: 999px;
   margin-bottom: 16px;
 }
@@ -317,9 +324,9 @@ const handleSubmit = () => {
 
 .hero-section {
   position: relative;
-  padding: 120px 24px 140px;
+  padding: 84px 24px 100px;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #0e1c2e 0%, #1c3350 55%, #3a5370 100%);
 }
 
 .hero-bg {
@@ -327,7 +334,7 @@ const handleSubmit = () => {
   inset: 0;
   background:
     radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35) 0%, transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.3) 0%, transparent 45%);
+    radial-gradient(circle at 80% 70%, rgba(212, 176, 110, 0.3) 0%, transparent 45%);
   pointer-events: none;
 }
 
@@ -473,7 +480,7 @@ const handleSubmit = () => {
   content: '•';
   position: absolute;
   left: 0;
-  color: #8b5cf6;
+  color: #b89450;
   font-weight: 700;
 }
 
@@ -554,7 +561,7 @@ const handleSubmit = () => {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #c9a96a, #b89450);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -638,9 +645,9 @@ const handleSubmit = () => {
 }
 
 .form-input:focus {
-  border-color: rgba(139, 92, 246, 0.5);
+  border-color: rgba(184, 148, 80, 0.5);
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 0 4px rgba(184, 148, 80, 0.1);
 }
 
 .form-input.is-invalid {
@@ -672,8 +679,8 @@ const handleSubmit = () => {
   border: none;
   border-radius: 14px;
   cursor: pointer;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-  box-shadow: 0 10px 24px rgba(139, 92, 246, 0.4);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 50%, #e6cf9a 100%);
+  box-shadow: 0 10px 24px rgba(184, 148, 80, 0.4);
   transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
   align-self: flex-start;
 }
@@ -687,11 +694,19 @@ const handleSubmit = () => {
 .submit-btn:hover {
   transform: translateY(-2px);
   filter: brightness(1.08);
-  box-shadow: 0 14px 32px rgba(139, 92, 246, 0.55);
+  box-shadow: 0 14px 32px rgba(184, 148, 80, 0.55);
 }
 
 .submit-btn:hover svg {
   transform: translateX(4px);
+}
+
+/* 提交加载态：禁用 + 降透明度 */
+.submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .map-section {
@@ -709,9 +724,9 @@ const handleSubmit = () => {
   position: relative;
   height: 360px;
   background:
-    linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(240, 147, 251, 0.08) 100%),
-    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(139, 92, 246, 0.06) 40px, rgba(139, 92, 246, 0.06) 41px),
-    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(139, 92, 246, 0.06) 40px, rgba(139, 92, 246, 0.06) 41px);
+    linear-gradient(135deg, rgba(201, 169, 106, 0.08) 0%, rgba(240, 147, 251, 0.08) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(184, 148, 80, 0.06) 40px, rgba(184, 148, 80, 0.06) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(184, 148, 80, 0.06) 40px, rgba(184, 148, 80, 0.06) 41px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -723,12 +738,12 @@ const handleSubmit = () => {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+  background: linear-gradient(135deg, #c9a96a, #b89450, #e6cf9a);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  box-shadow: 0 16px 36px rgba(139, 92, 246, 0.45);
+  box-shadow: 0 16px 36px rgba(184, 148, 80, 0.45);
   animation: bounce 2s infinite;
 }
 

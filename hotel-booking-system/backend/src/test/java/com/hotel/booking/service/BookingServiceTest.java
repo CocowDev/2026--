@@ -3,10 +3,13 @@ package com.hotel.booking.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hotel.booking.dto.BookingDTO;
+import com.hotel.booking.dto.ServiceBookingDTO;
 import com.hotel.booking.entity.Booking;
 import com.hotel.booking.entity.RoomType;
+import com.hotel.booking.mapper.BookingDishMapper;
 import com.hotel.booking.mapper.BookingMapper;
 import com.hotel.booking.mapper.RoomTypeMapper;
+import com.hotel.booking.service.impl.BookingServiceImpl;
 import com.hotel.booking.vo.BookingVO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +34,7 @@ import static org.mockito.Mockito.when;
 /**
  * BookingService 单元测试
  * 覆盖：创建/更新预订（含 BigDecimal 总价精确计算、日期校验）、状态更新、删除、
- * 仪表盘统计（含 todayCount 与营收汇总）、联表查询委托
+ * 用户取消、服务预订、仪表盘统计（含 todayCount 与营收汇总）、联表查询委托
  */
 @ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
@@ -42,8 +45,11 @@ class BookingServiceTest {
     @Mock
     private RoomTypeMapper roomTypeMapper;
 
+    @Mock
+    private BookingDishMapper bookingDishMapper;
+
     @InjectMocks
-    private BookingService bookingService;
+    private BookingServiceImpl bookingService;
 
     /** 构造合法预订请求：2026-09-01 入住，2026-09-03 离店（2 晚） */
     private BookingDTO buildBookingDTO() {
@@ -188,12 +194,16 @@ class BookingServiceTest {
     }
 
     @Test
-    void getBookings_委托分页联表查询() {
+    void getBookings_委托分页联表查询_支持用户过滤() {
         IPage<BookingVO> page = new Page<>();
-        when(bookingMapper.findByPageWithDetails(any(), any(), any())).thenReturn(page);
+        when(bookingMapper.findByPageWithDetails(any(), any(), any(), any())).thenReturn(page);
 
-        assertEquals(page, bookingService.getBookings(1, 10, "pending", "张"));
-        verify(bookingMapper).findByPageWithDetails(any(), eq("pending"), eq("张"));
+        // 管理员查询全部（userId=null）
+        assertEquals(page, bookingService.getBookings(1, 10, "pending", "张", null));
+        // 普通用户只查自己的订单（userId=10）
+        assertEquals(page, bookingService.getBookings(1, 10, null, null, 10L));
+        verify(bookingMapper).findByPageWithDetails(any(), eq("pending"), eq("张"), eq(null));
+        verify(bookingMapper).findByPageWithDetails(any(), eq(null), eq(null), eq(10L));
     }
 
     @Test
@@ -211,5 +221,82 @@ class BookingServiceTest {
         when(bookingMapper.findAllWithDetails()).thenReturn(list);
 
         assertEquals(list, bookingService.getRecentBookings());
+    }
+
+    // —— 以下为个人中心 / 服务预订新增用例 ——
+
+    @Test
+    void cancelBooking_本人待处理订单_取消成功() {
+        Booking existing = new Booking();
+        existing.setId(5L);
+        existing.setUserId(10L);
+        existing.setStatus("pending");
+        when(bookingMapper.selectById(5L)).thenReturn(existing);
+
+        bookingService.cancelBooking(5L, 10L);
+
+        assertEquals("cancelled", existing.getStatus());
+        verify(bookingMapper).updateById(existing);
+    }
+
+    @Test
+    void cancelBooking_非本人订单_抛出异常() {
+        Booking existing = new Booking();
+        existing.setId(5L);
+        existing.setUserId(10L);
+        existing.setStatus("pending");
+        when(bookingMapper.selectById(5L)).thenReturn(existing);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.cancelBooking(5L, 99L));
+        assertEquals("无权取消该预订", ex.getMessage());
+    }
+
+    @Test
+    void cancelBooking_非待处理订单_抛出异常() {
+        Booking existing = new Booking();
+        existing.setId(5L);
+        existing.setUserId(10L);
+        existing.setStatus("confirmed");
+        when(bookingMapper.selectById(5L)).thenReturn(existing);
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> bookingService.cancelBooking(5L, 10L));
+        assertEquals("仅待处理状态的订单可取消", ex.getMessage());
+    }
+
+    @Test
+    void createServiceBooking_成功_写入服务预订() {
+        ServiceBookingDTO dto = new ServiceBookingDTO();
+        dto.setServiceName("SPA按摩");
+        dto.setPrice(new BigDecimal("298.00"));
+        dto.setServiceDate(LocalDate.of(2026, 9, 10));
+        dto.setGuests(1);
+        dto.setGuestName("张三");
+        dto.setGuestPhone("13800000000");
+
+        bookingService.createServiceBooking(dto, 10L);
+
+        ArgumentCaptor<Booking> captor = ArgumentCaptor.forClass(Booking.class);
+        verify(bookingMapper).insert(captor.capture());
+        Booking saved = captor.getValue();
+        assertEquals("service", saved.getType());
+        assertEquals(10L, saved.getUserId());
+        assertEquals(new BigDecimal("298.00"), saved.getTotalPrice());
+        assertEquals(LocalDate.of(2026, 9, 10), saved.getCheckInDate());
+        assertEquals(1, saved.getGuestCount());
+        assertEquals("服务：SPA按摩，人数：1", saved.getSpecialRequests());
+    }
+
+    @Test
+    void getBookingById_餐饮预订_补查所选菜品() {
+        BookingVO vo = new BookingVO();
+        vo.setId(1L);
+        vo.setType("restaurant");
+        when(bookingMapper.findByIdWithDetails(1L)).thenReturn(vo);
+        when(bookingDishMapper.findByBookingId(1L)).thenReturn(List.of(new com.hotel.booking.entity.BookingDish()));
+
+        BookingVO result = bookingService.getBookingById(1L);
+
+        assertEquals(vo, result);
+        assertEquals(1, result.getDishes().size());
     }
 }

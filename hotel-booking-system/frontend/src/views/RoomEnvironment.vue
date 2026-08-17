@@ -6,15 +6,16 @@ const lightboxOpen = ref(false)
 const lightboxIndex = ref(0)
 let timer: number | null = null
 
+// 环境实景轮播：使用本地真实图片（frontend/public/images/ 内复用）
 const environmentImages = [
-  { url: 'https://picsum.photos/seed/env-bedroom/1200/800', thumb: 'https://picsum.photos/seed/env-bedroom/600/400', alt: '豪华卧室', desc: '宽敞舒适，温馨入梦' },
-  { url: 'https://picsum.photos/seed/env-bathroom/1200/800', thumb: 'https://picsum.photos/seed/env-bathroom/600/400', alt: '精致浴室', desc: '精致卫浴，畅享沐浴' },
-  { url: 'https://picsum.photos/seed/env-living/1200/800', thumb: 'https://picsum.photos/seed/env-living/600/400', alt: '舒适客厅', desc: '起居空间，惬意享受' },
-  { url: 'https://picsum.photos/seed/env-suite/1200/800', thumb: 'https://picsum.photos/seed/env-suite/600/400', alt: '行政套房', desc: '尊贵套房，极致体验' },
-  { url: 'https://picsum.photos/seed/env-ocean/1200/800', thumb: 'https://picsum.photos/seed/env-ocean/600/400', alt: '海景房', desc: '无敌海景，尽收眼底' },
-  { url: 'https://picsum.photos/seed/env-restaurant/1200/800', thumb: 'https://picsum.photos/seed/env-restaurant/600/400', alt: '餐厅', desc: '精致餐饮，味蕾盛宴' },
-  { url: 'https://picsum.photos/seed/env-gym/1200/800', thumb: 'https://picsum.photos/seed/env-gym/600/400', alt: '健身房', desc: '专业器械，随时健身' },
-  { url: 'https://picsum.photos/seed/env-pool/1200/800', thumb: 'https://picsum.photos/seed/env-pool/600/400', alt: '游泳池', desc: '恒温泳池，尽情畅游' }
+  { url: '/images/room-double.jpg', thumb: '/images/room-double.jpg', alt: '豪华卧室', desc: '宽敞舒适，温馨入梦' },
+  { url: '/images/room-family.jpg', thumb: '/images/room-family.jpg', alt: '精致浴室', desc: '精致卫浴，畅享沐浴' },
+  { url: '/images/room-business.jpg', thumb: '/images/room-business.jpg', alt: '舒适客厅', desc: '起居空间，惬意享受' },
+  { url: '/images/room-executive.jpg', thumb: '/images/room-executive.jpg', alt: '行政套房', desc: '尊贵套房，极致体验' },
+  { url: '/images/room-ocean.jpg', thumb: '/images/room-ocean.jpg', alt: '海景房', desc: '无敌海景，尽收眼底' },
+  { url: '/images/restaurant-luxury.jpg', thumb: '/images/restaurant-luxury.jpg', alt: '餐厅', desc: '精致餐饮，味蕾盛宴' },
+  { url: '/images/restaurant-seafood.jpg', thumb: '/images/restaurant-seafood.jpg', alt: '健身房', desc: '专业器械，随时健身' },
+  { url: '/images/restaurant-buffet.jpg', thumb: '/images/restaurant-buffet.jpg', alt: '游泳池', desc: '恒温泳池，尽情畅游' }
 ]
 
 const facilityList = [
@@ -100,7 +101,7 @@ onUnmounted(() => {
               :src="environmentImages[currentIndex].url"
               :alt="environmentImages[currentIndex].alt"
               class="carousel-image"
-              @error="(($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/env-fallback/1200/600')"
+              @error="(($event.target as HTMLImageElement).src = '/images/room-ocean.jpg')"
             >
             <div class="carousel-overlay">
               <div class="carousel-caption">
@@ -149,7 +150,7 @@ onUnmounted(() => {
               :src="img.thumb"
               :alt="img.alt"
               class="gallery-thumb"
-              @error="(($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/env-fallback/600/400')"
+              @error="(($event.target as HTMLImageElement).src = '/images/room-ocean.jpg')"
             >
             <div class="gallery-overlay">
               <div class="gallery-info">
@@ -181,12 +182,12 @@ onUnmounted(() => {
         <div class="facilities-wrap">
           <div class="facility-column">
             <h3 class="column-title">
-              <span class="column-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">🏨</span>
+              <span class="column-icon" style="background: linear-gradient(135deg, #c9a96a, #b89450);">🏨</span>
               客房设施
             </h3>
             <ul class="facility-list">
               <li v-for="(item, index) in facilityList.slice(0, 12)" :key="index">
-                <span class="facility-check" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <span class="facility-check" style="background: linear-gradient(135deg, #c9a96a, #b89450);">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
@@ -198,12 +199,12 @@ onUnmounted(() => {
 
           <div class="facility-column">
             <h3 class="column-title">
-              <span class="column-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">✨</span>
+              <span class="column-icon" style="background: linear-gradient(135deg, #e6cf9a, #a8874a);">✨</span>
               客房服务
             </h3>
             <ul class="facility-list">
               <li v-for="(item, index) in facilityList.slice(12)" :key="index">
-                <span class="facility-check" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                <span class="facility-check" style="background: linear-gradient(135deg, #e6cf9a, #a8874a);">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
@@ -245,7 +246,7 @@ onUnmounted(() => {
             :src="environmentImages[lightboxIndex].url"
             :alt="environmentImages[lightboxIndex].alt"
             class="lightbox-image"
-            @error="(($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/env-fallback/1200/800')"
+            @error="(($event.target as HTMLImageElement).src = '/images/room-ocean.jpg')"
           >
           <div class="lightbox-caption">
             <h3>{{ environmentImages[lightboxIndex].alt }}</h3>
@@ -263,7 +264,7 @@ onUnmounted(() => {
             @click="lightboxIndex = index"
           >
             <img :src="img.thumb" :alt="img.alt"
-              @error="(($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/env-fallback/200/150')">
+              @error="(($event.target as HTMLImageElement).src = '/images/room-ocean.jpg')">
           </button>
         </div>
       </div>
@@ -304,8 +305,8 @@ onUnmounted(() => {
   font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.1);
+  color: #b89450;
+  background: rgba(184, 148, 80, 0.1);
   border-radius: 999px;
   margin-bottom: 16px;
 }
@@ -327,9 +328,9 @@ onUnmounted(() => {
 
 .hero-section {
   position: relative;
-  padding: 120px 24px 140px;
+  padding: 84px 24px 100px;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #0e1c2e 0%, #1c3350 55%, #3a5370 100%);
 }
 
 .hero-bg {
@@ -337,7 +338,7 @@ onUnmounted(() => {
   inset: 0;
   background:
     radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35) 0%, transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.3) 0%, transparent 45%);
+    radial-gradient(circle at 80% 70%, rgba(212, 176, 110, 0.3) 0%, transparent 45%);
   pointer-events: none;
 }
 
@@ -511,7 +512,7 @@ onUnmounted(() => {
   height: 10px;
   border-radius: 50%;
   border: none;
-  background: rgba(139, 92, 246, 0.25);
+  background: rgba(184, 148, 80, 0.25);
   cursor: pointer;
   transition: background 0.3s ease, transform 0.3s ease, width 0.3s ease;
 }
@@ -519,7 +520,7 @@ onUnmounted(() => {
 .carousel-dot.is-active {
   width: 28px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #e6cf9a 100%);
 }
 
 .gallery-grid {
@@ -858,7 +859,7 @@ onUnmounted(() => {
 
 .lightbox-thumb.is-active {
   opacity: 1;
-  border-color: #f093fb;
+  border-color: #e6cf9a;
   box-shadow: 0 0 0 2px rgba(240, 147, 251, 0.5);
 }
 

@@ -10,8 +10,8 @@ const form = ref({
  password: '',
 });
 const showPassword = ref(false);
-const isAdminLogin = ref(false);
 const loading = ref(false);
+// 用户登录：后台为独立入口（/admin/login），不在用户端暴露
 const handleSubmit = async () => {
  if (!form.value.username || !form.value.password) {
  ElMessage.error('请输入用户名和密码');
@@ -19,16 +19,9 @@ const handleSubmit = async () => {
  }
  loading.value = true;
  try {
- if (isAdminLogin.value) {
- await authStore.adminLogin(form.value.username, form.value.password);
- ElMessage.success('管理员登录成功');
- router.push('/admin/dashboard');
- }
- else {
  await authStore.login(form.value.username, form.value.password);
  ElMessage.success('登录成功');
  router.push('/');
- }
  }
  catch (error: any) {
  ElMessage.error(error.response?.data?.message || '登录失败');
@@ -47,8 +40,8 @@ const handleSubmit = async () => {
           <div class="login-icon">
             <User />
           </div>
-          <h1>{{ isAdminLogin ? '管理员登录' : '用户登录' }}</h1>
-          <p>{{ isAdminLogin ? '欢迎登录管理后台' : '欢迎登录星级酒店预订系统' }}</p>
+          <h1>用户登录</h1>
+          <p>欢迎登录星级酒店预订系统</p>
         </div>
         
         <form @submit.prevent="handleSubmit" class="login-form">
@@ -93,13 +86,7 @@ const handleSubmit = async () => {
         </form>
         
         <div class="login-footer">
-          <div class="switch-login">
-            <span>{{ isAdminLogin ? '用户登录' : '管理员登录' }}</span>
-            <button @click="isAdminLogin = !isAdminLogin" class="link-btn">
-              切换{{ isAdminLogin ? '用户' : '管理员' }}登录
-            </button>
-          </div>
-          <div v-if="!isAdminLogin" class="register-link">
+          <div class="register-link">
             <span>还没有账号？</span>
             <button @click="router.push('/register')" class="link-btn">
               立即注册
@@ -117,7 +104,7 @@ const handleSubmit = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #e94560 100%);
+  background: linear-gradient(135deg, #10233b 0%, #1d3a5f 55%, #3a5370 100%);
 }
 
 .login-container {
@@ -142,7 +129,7 @@ const handleSubmit = async () => {
   width: 60px;
   height: 60px;
   margin: 0 auto 1rem;
-  background: #e94560;
+  background: #c9a96a;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -153,7 +140,7 @@ const handleSubmit = async () => {
 
 .login-header h1 {
   margin-bottom: 0.5rem;
-  color: #1a1a2e;
+  color: #10233b;
 }
 
 .login-header p {
@@ -199,7 +186,7 @@ const handleSubmit = async () => {
 
 .form-control:focus {
   outline: none;
-  border-color: #e94560;
+  border-color: #c9a96a;
 }
 
 .toggle-password {
@@ -232,7 +219,7 @@ const handleSubmit = async () => {
 }
 
 .btn-primary {
-  background: #e94560;
+  background: #c9a96a;
   color: #fff;
 }
 
@@ -255,7 +242,6 @@ const handleSubmit = async () => {
   text-align: center;
 }
 
-.switch-login,
 .register-link {
   display: flex;
   align-items: center;
@@ -267,12 +253,12 @@ const handleSubmit = async () => {
 .link-btn {
   background: none;
   border: none;
-  color: #e94560;
+  color: #c9a96a;
   cursor: pointer;
   text-decoration: underline;
 }
 
 .link-btn:hover {
-  color: #c73e54;
+  color: #a8874a;
 }
 </style>

@@ -1,50 +1,26 @@
 package com.hotel.booking.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hotel.booking.entity.User;
-import com.hotel.booking.mapper.UserMapper;
-import org.springframework.stereotype.Service;
 
-@Service
-public class UserService {
+/**
+ * 用户服务接口
+ */
+public interface UserService {
 
-    private final UserMapper userMapper;
+    /** 分页查询用户列表 */
+    IPage<User> getUsers(int page, int pageSize);
 
-    public UserService(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    /** 查询用户详情 */
+    User getUserById(Long id);
 
-    public IPage<User> getUsers(int page, int pageSize) {
-        Page<User> pageRequest = new Page<>(page, pageSize);
-        return userMapper.selectPage(pageRequest, null);
-    }
+    /** 更新用户（保留原密码，禁止通过此接口修改密码） */
+    void updateUser(Long id, User user);
 
-    public User getUserById(Long id) {
-        return userMapper.selectById(id);
-    }
+    /** 删除用户 */
+    void deleteUser(Long id);
 
-    public void updateUser(Long id, User user) {
-        User existing = userMapper.selectById(id);
-        if (existing == null) {
-            throw new RuntimeException("用户不存在");
-        }
-        user.setId(id);
-        // 不允许通过此接口修改密码；保留原密码
-        user.setPassword(existing.getPassword());
-        userMapper.updateById(user);
-    }
-
-    public void deleteUser(Long id) {
-        User user = userMapper.selectById(id);
-        if (user == null) {
-            throw new RuntimeException("用户不存在");
-        }
-        userMapper.deleteById(id);
-    }
-
-    public long getActiveUsersCount() {
-        return userMapper.selectCount(null);
-    }
+    /** 活跃用户数（注册总数） */
+    long getActiveUsersCount();
 
 }

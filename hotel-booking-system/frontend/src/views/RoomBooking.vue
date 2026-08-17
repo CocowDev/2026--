@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { bookingAPI, roomTypeAPI, restaurantAPI } from '../api';
 import { getToday, getTomorrow } from '../utils/date';
 import { validateDateRange } from '../utils/validation';
@@ -10,6 +10,7 @@ import ServiceList from '../components/ServiceList.vue';
 import type { RoomType, Restaurant } from '../types';
 
 const router = useRouter();
+const route = useRoute();
 const currentCategory = ref('rooms');
 const selectedRoom = ref<RoomType | null>(null);
 const selectedRestaurant = ref<Restaurant | null>(null);
@@ -56,7 +57,71 @@ const handleDiningSelect = (item: Restaurant | null) => {
 };
 
 const handleServiceBook = (service: { name: string; price: number }) => {
-  message.value = `已预约 ${service.name}，费用 ${service.price} 元`;
+  openServiceModal(service);
+};
+
+// —— 服务预订弹窗 ——
+const serviceModalOpen = ref(false);
+const selectedService = ref<{ name: string; price: number } | null>(null);
+const serviceSubmitting = ref(false);
+const serviceForm = ref({
+  serviceDate: getToday(),
+  guests: '1',
+  guestName: '',
+  guestPhone: '',
+  remark: '',
+});
+
+// 打开服务预约弹窗，自动带入已登录用户信息
+const openServiceModal = (service: { name: string; price: number }) => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  selectedService.value = service;
+  serviceForm.value = {
+    serviceDate: getToday(),
+    guests: '1',
+    guestName: user.name || '',
+    guestPhone: user.phone || '',
+    remark: '',
+  };
+  serviceModalOpen.value = true;
+};
+
+const closeServiceModal = () => {
+  if (!serviceSubmitting.value) {
+    serviceModalOpen.value = false;
+  }
+};
+
+// 提交服务预订
+const submitServiceBooking = async () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (!user.id) {
+    message.value = '请先登录后再预约服务';
+    router.push('/login');
+    return;
+  }
+  if (!serviceForm.value.serviceDate || !serviceForm.value.guestName || !serviceForm.value.guestPhone) {
+    message.value = '请填写完整的预约信息';
+    return;
+  }
+  serviceSubmitting.value = true;
+  try {
+    await bookingAPI.createService({
+      serviceName: selectedService.value!.name,
+      price: selectedService.value!.price,
+      serviceDate: serviceForm.value.serviceDate,
+      guests: Number(serviceForm.value.guests),
+      guestName: serviceForm.value.guestName,
+      guestPhone: serviceForm.value.guestPhone,
+      remark: serviceForm.value.remark,
+    });
+    message.value = `服务预约成功！${selectedService.value!.name}，可在个人中心查看`;
+    serviceModalOpen.value = false;
+  } catch {
+    message.value = '预约失败，请稍后重试';
+  } finally {
+    serviceSubmitting.value = false;
+  }
 };
 
 const handleDiningBooking = async () => {
@@ -154,6 +219,11 @@ const loadData = async () => {
   }
 };
 
+// 支持从首页"预约服务"跳转并自动切换到服务分类（?tab=services）
+if (route.query.tab === 'services') {
+  currentCategory.value = 'services';
+}
+
 loadData();
 </script>
 
@@ -228,7 +298,7 @@ loadData();
                 :src="selectedRoom.imageUrl"
                 class="confirm-img"
                 :alt="selectedRoom.title"
-                @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/hotel-room/600/400'"
+                @error="($event.target as HTMLImageElement).src = '/images/room-single.jpg'"
               >
             </div>
             <div class="confirm-info">
@@ -306,7 +376,7 @@ loadData();
                 :src="selectedRestaurant.imageUrl"
                 class="confirm-img"
                 :alt="selectedRestaurant.name"
-                @error="($event.target as HTMLImageElement).src = 'https://picsum.photos/seed/restaurant/600/400'"
+                @error="($event.target as HTMLImageElement).src = '/images/restaurant-luxury.jpg'"
               >
             </div>
             <div class="confirm-info">
@@ -369,6 +439,54 @@ loadData();
         </section>
       </Transition>
     </div>
+
+    <!-- 服务预约弹窗 -->
+    <Transition name="fade">
+      <div v-if="serviceModalOpen" class="modal-overlay" @click.self="closeServiceModal">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h3>预约服务 · {{ selectedService?.name }}</h3>
+            <button type="button" class="modal-close" @click="closeServiceModal">×</button>
+          </div>
+          <div class="modal-body">
+            <p class="modal-price">费用：<strong>¥{{ selectedService?.price }}</strong> / 次</p>
+            <div class="modal-form">
+              <div class="modal-field">
+                <label>预约日期</label>
+                <input type="date" v-model="serviceForm.serviceDate" class="modal-input" :min="getToday()">
+              </div>
+              <div class="modal-field">
+                <label>人数</label>
+                <select v-model="serviceForm.guests" class="modal-input">
+                  <option value="1">1 人</option>
+                  <option value="2">2 人</option>
+                  <option value="3">3 人</option>
+                  <option value="4">4 人</option>
+                </select>
+              </div>
+              <div class="modal-field">
+                <label>姓名</label>
+                <input type="text" v-model="serviceForm.guestName" class="modal-input" placeholder="请输入姓名">
+              </div>
+              <div class="modal-field">
+                <label>联系电话</label>
+                <input type="tel" v-model="serviceForm.guestPhone" class="modal-input" placeholder="请输入电话">
+              </div>
+              <div class="modal-field">
+                <label>备注（选填）</label>
+                <textarea v-model="serviceForm.remark" class="modal-input modal-textarea" rows="2" placeholder="特殊需求请说明"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="modal-btn modal-btn-ghost" @click="closeServiceModal">取消</button>
+            <button type="button" class="modal-btn modal-btn-primary" :disabled="serviceSubmitting" @click="submitServiceBooking">
+              {{ serviceSubmitting ? '提交中...' : '确认预约' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -382,14 +500,14 @@ loadData();
 .booking-hero {
   position: relative;
   overflow: hidden;
-  padding: 80px 0 96px;
+  padding: 60px 0 72px;
   background:
-    radial-gradient(1200px 500px at 10% -10%, rgba(255, 184, 107, 0.35), transparent 60%),
-    radial-gradient(1000px 500px at 110% 10%, rgba(120, 119, 198, 0.35), transparent 60%),
-    linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    radial-gradient(1200px 500px at 10% -10%, rgba(201, 169, 106, 0.28), transparent 60%),
+    radial-gradient(1000px 500px at 110% 10%, rgba(61, 90, 128, 0.45), transparent 60%),
+    linear-gradient(135deg, #0e1c2e 0%, #1c3350 55%, #3a5370 100%);
   color: #fff;
   border-radius: 0 0 32px 32px;
-  box-shadow: 0 20px 60px -30px rgba(102, 126, 234, 0.55);
+  box-shadow: 0 20px 60px -30px rgba(201, 169, 106, 0.55);
 }
 
 .hero-overlay {
@@ -447,7 +565,7 @@ loadData();
   margin-bottom: 28px;
   background: #fff;
   border-radius: 999px;
-  box-shadow: 0 12px 32px -16px rgba(31, 38, 135, 0.25);
+  box-shadow: 0 12px 32px -16px rgba(16, 35, 59, 0.25);
   overflow-x: auto;
 }
 
@@ -469,13 +587,13 @@ loadData();
 
 .tab-button:hover {
   color: #374151;
-  background: rgba(102, 126, 234, 0.08);
+  background: rgba(201, 169, 106, 0.08);
 }
 
 .tab-button.is-active {
   color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 8px 20px -6px rgba(118, 75, 162, 0.55);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 100%);
+  box-shadow: 0 8px 20px -6px rgba(201, 169, 106, 0.55);
   transform: translateY(-1px);
 }
 
@@ -519,7 +637,7 @@ loadData();
   background: #fff;
   border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 24px 60px -30px rgba(31, 38, 135, 0.35);
+  box-shadow: 0 24px 60px -30px rgba(16, 35, 59, 0.35);
   border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
@@ -528,7 +646,7 @@ loadData();
   align-items: center;
   justify-content: space-between;
   padding: 24px 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 100%);
   color: #fff;
 }
 
@@ -557,7 +675,7 @@ loadData();
   margin-bottom: 24px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px -15px rgba(31, 38, 135, 0.3);
+  box-shadow: 0 10px 30px -15px rgba(16, 35, 59, 0.3);
 }
 
 .confirm-img {
@@ -594,7 +712,7 @@ loadData();
   font-size: 28px;
   font-weight: 700;
   margin: 0 0 6px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #c9a96a, #b89450);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -652,9 +770,9 @@ loadData();
 }
 
 .form-input:focus {
-  border-color: #764ba2;
+  border-color: #b89450;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.15);
+  box-shadow: 0 0 0 4px rgba(201, 169, 106, 0.15);
 }
 
 .form-input::placeholder {
@@ -689,14 +807,14 @@ loadData();
   font-weight: 600;
   letter-spacing: 1px;
   color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #c9a96a 0%, #b89450 100%);
   background-size: 200% 200%;
   background-position: 0% 50%;
   border: none;
   border-radius: 14px;
   cursor: pointer;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 25px -10px rgba(118, 75, 162, 0.65);
+  box-shadow: 0 10px 25px -10px rgba(201, 169, 106, 0.65);
   overflow: hidden;
 }
 
@@ -704,7 +822,7 @@ loadData();
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background: linear-gradient(135deg, #b89450 0%, #c9a96a 100%);
   opacity: 0;
   transition: opacity 0.35s ease;
 }
@@ -712,7 +830,7 @@ loadData();
 .btn-gradient:hover:not(:disabled) {
   background-position: 100% 50%;
   transform: translateY(-2px);
-  box-shadow: 0 16px 35px -10px rgba(118, 75, 162, 0.75);
+  box-shadow: 0 16px 35px -10px rgba(201, 169, 106, 0.75);
 }
 
 .btn-gradient:hover:not(:disabled)::before {
@@ -721,7 +839,7 @@ loadData();
 
 .btn-gradient:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 6px 18px -6px rgba(118, 75, 162, 0.6);
+  box-shadow: 0 6px 18px -6px rgba(201, 169, 106, 0.6);
 }
 
 .btn-gradient:disabled {
@@ -805,5 +923,170 @@ loadData();
   .confirm-img {
     height: 180px;
   }
+}
+
+/* —— 服务预约弹窗 —— */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(16, 35, 59, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 440px;
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px -20px rgba(16, 35, 59, 0.5);
+  animation: modal-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: linear-gradient(135deg, #10233b, #1d3a5f);
+  color: #fff;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.modal-close:hover {
+  color: #e6cf9a;
+}
+
+.modal-body {
+  padding: 20px 22px;
+}
+
+.modal-price {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: #6b6456;
+}
+
+.modal-price strong {
+  color: #b89450;
+  font-size: 18px;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-input:focus {
+  border-color: #c9a96a;
+  box-shadow: 0 0 0 3px rgba(201, 169, 106, 0.18);
+}
+
+.modal-textarea {
+  resize: vertical;
+  min-height: 56px;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 16px 22px;
+  background: #faf9f6;
+  border-top: 1px solid #efe8da;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 11px 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.modal-btn-ghost {
+  background: #fff;
+  color: #6b6456;
+  border: 1px solid #e3d9c2;
+}
+
+.modal-btn-ghost:hover {
+  background: #f5f0e6;
+}
+
+.modal-btn-primary {
+  background: linear-gradient(135deg, #b89450, #d9bc7f);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(184, 148, 80, 0.35);
+}
+
+.modal-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.modal-btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

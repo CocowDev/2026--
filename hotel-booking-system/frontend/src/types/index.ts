@@ -34,6 +34,29 @@ export interface Restaurant {
   updatedAt: string;
 }
 
+/** 餐厅菜品（餐饮预订第二步点选） */
+export interface Dish {
+  id: number;
+  restaurantId: number;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** 服务预订请求体 */
+export interface ServiceBookingForm {
+  serviceName: string;
+  price: number;
+  serviceDate: string;
+  guests: number;
+  guestName: string;
+  guestPhone: string;
+  remark?: string;
+}
+
 export interface Service {
   id: number;
   name: string;
